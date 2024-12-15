@@ -8,6 +8,10 @@ body {
     color: #333;
 }
 
+.cyrillic {
+    font-family: "Arial", sans-serif;
+}
+
 /* ヘッダーのスタイル */
 header {
     position: sticky;
@@ -124,11 +128,13 @@ h2 {
 
 .sticker table {
     border-collapse: collapse;
-    margin: 0px 15px
+    margin: 0px 30px;
 }
+
 .sticker table tr td:first-child {
+    width: 100px;
     text-align: justify;
-    padding: 0px 5px;
+    margin: 0px 20px;
 }
 
 .sticker p {
@@ -149,4 +155,20 @@ h2 {
 
 #poem p {
     padding: 10px 0;
+}
+
+/* 引用 */
+.citation {
+    font-style: italic;
+    font-size: 12px;
+}
+
+.citation h4 {
+    margin: 0px;
+    padding: 0px;
+}
+
+.citation ul li {
+    margin: 0px;
+    padding: 0px;
 }
