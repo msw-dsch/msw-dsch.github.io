@@ -124,11 +124,15 @@ h2 {
 
 .sticker table {
     border-collapse: collapse;
-    margin: 0px 10px
+    margin: 0px 15px
 }
 .sticker table tr td:first-child {
     text-align: justify;
     padding: 0px 5px;
+}
+
+.sticker p {
+    margin: 0px 10px;
 }
 
 /* 前文 */
