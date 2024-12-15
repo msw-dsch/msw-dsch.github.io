@@ -1,0 +1,39 @@
+/* 全体のスタイル */
+body {
+    font-family: sans-serif, "MS Pゴシック";
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #CCCCFF;
+    color: #333;
+}
+
+/* ヘッダーのスタイル */
+header {
+    position: sticky;
+    top: 0;
+    background-color: #0056b3;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000; /* 他の要素の上に表示 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ヘッダー内のリンク */
+header a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+header a:hover {
+    text-decoration: underline;
+}
+
+/* 各セクションのスタイル */
+section {
+    padding: 100px 20px;
+    border-bottom: 1px solid #ddd;
+}
