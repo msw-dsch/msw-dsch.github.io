@@ -1,0 +1,174 @@
+/* 全体のスタイル */
+body {
+    font-family: "MS Pゴシック", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #CCCCFF;
+    color: #333;
+}
+
+.cyrillic {
+    font-family: "Arial", sans-serif;
+}
+
+/* ヘッダーのスタイル */
+header {
+    position: sticky;
+    top: 0;
+    background-color: #333399;
+    color: white;
+    padding: 8px 20px 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 7px;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.icon {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 0px;
+    color: white;
+}
+
+.icon a:hover {
+    color: #ffcc00;
+}
+
+.icon img {
+    height: 60px;
+    weight: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #CCCCFF;
+}
+
+.icon img:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+.icon span {
+    font-size: 0.9rem;
+    color: white;
+}
+
+.citetitle {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    font-size: 1.2rem;
+    color: white;
+}
+
+.citetitle h1 {
+    font-size: 2.0rem;
+    color: white;
+    margin: 0px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* 各セクションのスタイル */
+section {
+    padding: 50px 40px;
+    border-bottom: 1px solid #ddd;
+}
+
+h2 {
+    text-size: 20px;
+    border-bottom: 1px solid #333;
+}
+
+.sticker {
+    position: relative;
+    margin: 50px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 2px 4px 6px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sticker::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    background-color: #9999FF;
+    boder: none;
+    clip-path: polygon(0% 0%, 100% 0, 0 100%);
+    z-index: 1;
+}
+
+.sticker::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background-color: #9999FF;
+    boder: none;
+    clip-path: polygon(100% 100%, 100% 0, 0 100%);
+    z-index: 1;
+}
+
+.sticker table {
+    border-collapse: collapse;
+    margin: 0px 30px;
+}
+
+.sticker table tr td:first-child {
+    width: 100px;
+    text-align: justify;
+    margin: 0px 20px;
+}
+
+.sticker p {
+    margin: 20px 10px;
+}
+
+/* 前文 */
+#poem {
+    text-align: center;
+    line-height: 42px;
+    font-size: 13px;
+}
+
+#poem h2 {
+    text-decoration: none;
+    border-bottom: none;
+}
+
+#poem p {
+    padding: 10px 0;
+}
+
+/* 引用 */
+.citation {
+    font-style: italic;
+    font-size: 12px;
+}
+
+.citation h4 {
+    margin: 0px;
+    padding: 0px;
+}
+
+.citation ul li {
+    margin: 0px;
+    padding: 0px;
+}
