@@ -65,6 +65,10 @@ header {
     color: white;
 }
 
+.citetitle {
+    padding: 5px;
+}
+
 header nav a {
     color: white;
     text-decoration: none;
