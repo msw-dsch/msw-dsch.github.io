@@ -65,13 +65,13 @@ header {
     color: white;
 }
 
-.citetitle h1 a {
+.citetitle a {
     font-size: 2.0rem;
     color: white;
     margin: 0px;
 }
 
-.citetitle h1 a:hover {
+.citetitle a:hover {
     text-decoration: underline;
 }
 
