@@ -1,0 +1,8 @@
+# テキストファイルの改行コードをLFに統一する
+# （WindowsとGit管理下のコミット内容でCRLF/LFが混在し，diffが肥大化する問題を防ぐ）
+* text=auto eol=lf
+
+*.JPG binary
+*.jpg binary
+*.png binary
+*.gif binary

@@ -88,7 +88,7 @@ section {
 }
 
 h2 {
-    text-size: 20px;
+    font-size: 20px;
     border-bottom: 1px solid #333;
 }
 
@@ -108,7 +108,7 @@ h2 {
     width: 40px;
     height: 40px;
     background-color: #9999FF;
-    boder: none;
+    border: none;
     clip-path: polygon(0% 0%, 100% 0, 0 100%);
     z-index: 1;
 }
@@ -121,7 +121,7 @@ h2 {
     width: 40px;
     height: 40px;
     background-color: #9999FF;
-    boder: none;
+    border: none;
     clip-path: polygon(100% 100%, 100% 0, 0 100%);
     z-index: 1;
 }
