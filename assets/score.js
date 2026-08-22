@@ -2,12 +2,13 @@
  * 壮大なる愚作 — スコア譜／パート譜の描画エンジン（楽譜としてのグラフ）
  *
  * window.SCORE_DATA を読み込み，
- *   - window.SCORE_FOCUS_ID が未設定  → スコア譜（index.html。全ノード）
- *   - window.SCORE_FOCUS_ID が設定済 → パート譜（記事ページ。その記事を中心とした近傍のみ）
+ *   - window.SCORE_FOCUS_ID が未設定  → スコア譜（index.html。全ノード，SATB4段）
+ *   - window.SCORE_FOCUS_ID が設定済 → パート譜（記事ページ。その記事を中心とした近傍を1段の譜表に）
  * を #score-canvas-mount 内の <canvas> に描画する．
  *
- * 音高は各ノードのpc1（記事ベクトルの主成分の仮値）の四分位で
- * ソプラノ／アルト／テノール／バスの4声部に振り分ける．意味的な区分けは持たない．
+ * 各ノードの声部（S/A/T/B）は，全ノードのpc1（記事ベクトルの主成分の仮値）の
+ * 四分位から一度だけグローバルに決まる固定属性．どちらの譜面でも同じ声部として扱われる．
+ * パート譜では声部ごとに段を分けず，1段の譜表上に音部記号だけで暗示する．
  * 連桁（符幹をつなぐ太線）は，同一連作（series）の投稿どうしのみに限定．
  */
 (function () {
@@ -43,11 +44,12 @@
     if (!mount || !window.SCORE_DATA) return;
 
     var VOICES = {
-      S: { row: 0, shape: "triangle", color: "#e2a530" },
-      A: { row: 1, shape: "circle",   color: "#3f6fa0" },
-      T: { row: 2, shape: "circle",   color: "#1f3550" },
-      B: { row: 3, shape: "diamond",  color: "#bd3a2a" }
+      S: { row: 0, shape: "triangle", color: "#e2a530", clef: "treble", clefScale: 1.15 },
+      A: { row: 1, shape: "circle",   color: "#3f6fa0", clef: "treble", clefScale: 0.85 },
+      T: { row: 2, shape: "circle",   color: "#1f3550", clef: "bass",   clefScale: 0.85 },
+      B: { row: 3, shape: "diamond",  color: "#bd3a2a", clef: "bass",   clefScale: 1.15 }
     };
+    var VOICE_KEYS = ["S", "A", "T", "B"];
 
     var NODES = window.SCORE_DATA.nodes.map(function (n) {
       return {
@@ -58,6 +60,24 @@
     });
     var byId = {};
     NODES.forEach(function (n) { byId[n.id] = n; });
+
+    // 声部はpc1の四分位から一度だけグローバルに決める（表示範囲に依存しない固定属性）
+    (function assignVoices() {
+      var sorted = NODES.slice().sort(function (a, b) { return a.pc1 - b.pc1; });
+      var n = sorted.length;
+      var b0 = sorted[0].pc1;
+      var b1 = sorted[Math.min(n - 1, Math.floor(n * 0.25))].pc1;
+      var b2 = sorted[Math.min(n - 1, Math.floor(n * 0.5))].pc1;
+      var b3 = sorted[Math.min(n - 1, Math.floor(n * 0.75))].pc1;
+      var b4 = sorted[n - 1].pc1;
+      NODES.forEach(function (node) {
+        var v = node.pc1;
+        var bandIdx = v >= b3 ? 0 : v >= b2 ? 1 : v >= b1 ? 2 : 3; // 0=S 1=A 2=T 3=B
+        var lo = [b3, b2, b1, b0][bandIdx], hi = [b4, b3, b2, b1][bandIdx];
+        node.voice = VOICE_KEYS[bandIdx];
+        node.bandLocal = hi > lo ? (v - lo) / (hi - lo) : 0.5; // 0..1, そのバンド内での相対位置
+      });
+    })();
 
     var bySeries = {};
     NODES.forEach(function (n) { if (n.series) (bySeries[n.series] = bySeries[n.series] || []).push(n); });
@@ -113,6 +133,7 @@
     var layout = null, activeIds = [], activeMin, activeMax;
     var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
     var PAD_L = 108, PAD_R = 40, PAD_TOP = 40, ROW_H = 132, LINE_GAP = 8, BOTTOM_AXIS = 34;
+    var PART_BASE_OFFSET = 110, PART_MARGIN = 110;
 
     var fullMinDate = new Date(Math.min.apply(null, NODES.map(function (n) { return n.date.getTime(); })));
     var fullMaxDate = new Date(Math.max.apply(null, NODES.map(function (n) { return n.date.getTime(); })));
@@ -144,45 +165,36 @@
     function computeLayout(cssWidth, ids, rangeMin, rangeMax) {
       var innerW = cssWidth - PAD_L - PAD_R;
       var span = rangeMax.getTime() - rangeMin.getTime();
-      var pc1ById = {};
-      ids.forEach(function (id) { pc1ById[id] = byId[id].pc1; });
-      var sorted = ids.slice().sort(function (a, b) { return pc1ById[a] - pc1ById[b]; });
-      var n = sorted.length;
-      var boundaries = [
-        pc1ById[sorted[0]],
-        pc1ById[sorted[Math.min(n - 1, Math.floor(n * 0.25))]],
-        pc1ById[sorted[Math.min(n - 1, Math.floor(n * 0.5))]],
-        pc1ById[sorted[Math.min(n - 1, Math.floor(n * 0.75))]],
-        pc1ById[sorted[n - 1]]
-      ];
-      function bandOf(v) {
-        if (v >= boundaries[3]) return 0; // S
-        if (v >= boundaries[2]) return 1; // A
-        if (v >= boundaries[1]) return 2; // T
-        return 3; // B
-      }
-      var voiceKeys = ["S", "A", "T", "B"];
       var pos = {};
+      var maxAbsStep = 0;
+
       ids.forEach(function (id) {
         var n2 = byId[id];
-        var bandIdx = bandOf(n2.pc1);
-        var voice = voiceKeys[bandIdx];
-        var v = VOICES[voice];
-        var lo = boundaries[3 - bandIdx], hi = boundaries[4 - bandIdx];
-        var local = hi > lo ? (n2.pc1 - lo) / (hi - lo) : 0.5;
-
         var t = span > 0 ? (n2.date.getTime() - rangeMin.getTime()) / span : 0.5;
         var jitterX = (mulberry32(hashStr(id + "x"))() - 0.5) * 10;
         var x = PAD_L + clamp(t, 0, 1) * innerW + jitterX;
 
-        var step = 1 + Math.round(clamp(local, 0, 1) * 3);
-        var dir = (voice === "S" || voice === "A") ? -1 : 1;
-        var baseY = PAD_TOP + v.row * ROW_H + 2 * LINE_GAP;
-        var y = baseY + dir * step * (LINE_GAP / 2);
+        var baseY, step;
+        if (mode === "score") {
+          var bandStep = 1 + Math.round(clamp(n2.bandLocal, 0, 1) * 3);
+          var dir = (n2.voice === "S" || n2.voice === "A") ? -1 : 1;
+          step = dir * bandStep;
+          baseY = PAD_TOP + VOICES[n2.voice].row * ROW_H + 2 * LINE_GAP;
+        } else {
+          step = clamp(Math.round(n2.pc1 * 8), -16, 16);
+          baseY = PAD_TOP + PART_BASE_OFFSET;
+        }
+        maxAbsStep = Math.max(maxAbsStep, Math.abs(step));
 
-        pos[id] = { x: x, y: y, step: dir * step, voice: voice, baseY: baseY };
+        var y = baseY - step * (LINE_GAP / 2);
+        pos[id] = { x: x, y: y, step: step, baseY: baseY };
       });
-      return { pos: pos, width: cssWidth, height: PAD_TOP + 3 * ROW_H + 4 * LINE_GAP + 40 + BOTTOM_AXIS };
+
+      var height = mode === "score"
+        ? PAD_TOP + 3 * ROW_H + 4 * LINE_GAP + 40 + BOTTOM_AXIS
+        : PAD_TOP + PART_BASE_OFFSET + Math.max(PART_MARGIN, maxAbsStep * (LINE_GAP / 2) + 40) + BOTTOM_AXIS;
+
+      return { pos: pos, width: cssWidth, height: height };
     }
 
     function resize() {
@@ -219,7 +231,7 @@
         var backLink = document.createElement("a");
         backLink.className = "act"; backLink.href = homeHref; backLink.textContent = "◀ スコア譜（全体）へ";
         controls.appendChild(backLink);
-        readout.innerHTML = "<b>パート譜．</b> " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "") + " を中心に，時系列・連作関係の近い" + (activeIds.length - 1) + "件を抽出．";
+        readout.innerHTML = "<b>パート譜．</b> " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "") + " を中心に，時系列・連作関係の近い" + (activeIds.length - 1) + "件を抽出．声部は音部記号と符頭の形・色で示す（この記事は" + n.voice + "）．";
       }
     }
 
@@ -240,22 +252,68 @@
       return s;
     }
 
+    // 音部記号を暗示する抽象的な記号（治療クレフの正確な字形ではなく，声部を示す最小限のしるし）
+    function drawClef(cx, cy, kind, color, scale) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(scale, scale);
+      ctx.strokeStyle = color; ctx.fillStyle = color;
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      if (kind === "treble") {
+        ctx.lineWidth = 1.7;
+        ctx.beginPath();
+        ctx.moveTo(0, -17);
+        ctx.bezierCurveTo(9, -17, 9, -6, 0, -3);
+        ctx.bezierCurveTo(-9, 0, -9, 9, 0, 11);
+        ctx.bezierCurveTo(6, 12, 6, 5, 0, 3);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 14, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.arc(-1, -2, 8, -Math.PI * 0.1, Math.PI * 0.9);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(4, -9, 1.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(4, 5, 1.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
     function staffBaseY(row) { return PAD_TOP + row * ROW_H + 2 * LINE_GAP; }
 
-    function drawStaff(voiceKey) {
-      var v = VOICES[voiceKey];
-      var baseY = staffBaseY(v.row);
+    function drawStaffLines(baseY, width) {
       ctx.strokeStyle = "#b9b19a"; ctx.lineWidth = 1;
       for (var l = -2; l <= 2; l++) {
         var y = baseY - l * LINE_GAP;
-        ctx.beginPath(); ctx.moveTo(PAD_L - 24, Math.round(y) + 0.5); ctx.lineTo(layout.width - PAD_R, Math.round(y) + 0.5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(PAD_L - 24, Math.round(y) + 0.5); ctx.lineTo(width - PAD_R, Math.round(y) + 0.5); ctx.stroke();
       }
-      ctx.font = "600 13px 'Jost', sans-serif"; ctx.fillStyle = v.color; ctx.textBaseline = "middle"; ctx.textAlign = "left";
-      ctx.fillText(voiceKey, PAD_L - 24, baseY - 2 * LINE_GAP - 10);
+    }
+
+    function drawStaves() {
+      if (mode === "score") {
+        VOICE_KEYS.forEach(function (key) {
+          var v = VOICES[key];
+          var baseY = staffBaseY(v.row);
+          drawStaffLines(baseY, layout.width);
+          drawClef(PAD_L - 46, baseY, v.clef, v.color, v.clefScale);
+        });
+      } else {
+        var baseY = PAD_TOP + PART_BASE_OFFSET;
+        drawStaffLines(baseY, layout.width);
+        var fv = VOICES[byId[focusId].voice];
+        drawClef(PAD_L - 46, baseY, fv.clef, fv.color, fv.clefScale * 1.1);
+      }
     }
 
     function drawTimeAxis() {
-      var startY = PAD_TOP - 12, endY = staffBaseY(3) + 2 * LINE_GAP + 14;
+      var lastRowBaseY = mode === "score" ? staffBaseY(3) : (PAD_TOP + PART_BASE_OFFSET);
+      var startY = PAD_TOP - 12, endY = layout.height - BOTTOM_AXIS + 6;
       var span = activeMax.getTime() - activeMin.getTime();
       if (span <= 0) return;
       var startYear = activeMin.getFullYear(), endYear = activeMax.getFullYear();
@@ -273,9 +331,21 @@
       }
     }
 
+    function drawLedgerLines(p) {
+      var absS = Math.abs(p.step);
+      if (absS < 5) return;
+      var dir = p.step >= 0 ? 1 : -1;
+      var maxK = Math.floor(absS / 2) * 2;
+      ctx.strokeStyle = "#b9b19a"; ctx.lineWidth = 1;
+      for (var k = 6; k <= maxK; k += 2) {
+        var ly = p.baseY - dir * k * (LINE_GAP / 2);
+        ctx.beginPath(); ctx.moveTo(p.x - 9, ly + 0.5); ctx.lineTo(p.x + 9, ly + 0.5); ctx.stroke();
+      }
+    }
+
     function drawNotehead(n, p, opts) {
       opts = opts || {};
-      var v = VOICES[p.voice];
+      var v = VOICES[n.voice];
       var color = opts.active ? "#bd3a2a" : v.color;
       var r = 5.6;
 
@@ -283,14 +353,7 @@
         ctx.beginPath(); ctx.arc(p.x, p.y, r + 8, 0, Math.PI * 2);
         ctx.strokeStyle = "rgba(28,26,23,0.5)"; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
       }
-      if (Math.abs(p.step) > 2) {
-        var dir = p.step > 0 ? 1 : -1;
-        ctx.strokeStyle = "#b9b19a"; ctx.lineWidth = 1;
-        for (var l = 3; l <= Math.abs(p.step); l++) {
-          var ly = p.baseY + dir * l * LINE_GAP;
-          ctx.beginPath(); ctx.moveTo(p.x - 9, ly + 0.5); ctx.lineTo(p.x + 9, ly + 0.5); ctx.stroke();
-        }
-      }
+      drawLedgerLines(p);
 
       var stemUp = p.step >= 0;
       var stemTopY = stemUp ? p.y - 24 : p.y + 24;
@@ -326,7 +389,7 @@
 
     function draw() {
       ctx.clearRect(0, 0, layout.width, layout.height);
-      ["S", "A", "T", "B"].forEach(drawStaff);
+      drawStaves();
       drawTimeAxis();
       activeIds.forEach(function (id) { drawNotehead(byId[id], layout.pos[id], {}); });
       EDGES.forEach(function (e) { if (layout.pos[e[0]] && layout.pos[e[1]]) drawBeam(e); });
@@ -353,7 +416,7 @@
         tooltip.style.opacity = "1";
         tooltip.style.left = (rect.left - wrapRect.left + layout.pos[hit].x) + "px";
         tooltip.style.top = (rect.top - wrapRect.top + layout.pos[hit].y - 20) + "px";
-        tooltip.querySelector(".cat").textContent = layout.pos[hit].voice + " ｜ " + n.kind + " ｜ " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "");
+        tooltip.querySelector(".cat").textContent = n.voice + " ｜ " + n.kind + " ｜ " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "");
         tooltip.querySelector(".title").textContent = n.title + (n.id === focusId ? "（この記事）" : "");
         canvas.style.cursor = n.id === focusId ? "default" : "pointer";
       } else {

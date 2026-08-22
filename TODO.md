@@ -5,7 +5,7 @@
 ## コンテンツ
 
 - [ ] 略歴（`introduction/`）ページの本文を作成する
-- [ ] 研究記録（`research/`）ページの本文を作成する（建築・災害リスク関連の研究紹介）。実記事ができ次第 `assets/score-data.js` に追加し，`demo/` 以下のデモ記事は削除する
+- [ ] 研究記録（`research/`）ページの本文を作成する（建築・災害リスク関連の研究紹介）。実記事ができ次第 `assets/score-data.js` に追加し，`contents/` 内の対応するデモ記事（research-note-*）は削除する
 - [ ] 作品集：`Lyric Pieces Op. 2` の解説文を追加する
 - [ ] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報（作曲時期・編成・解説など）を追加する
 - [ ] 楽曲探索：ロースラヴェツ以外の記事を追加するか検討する
