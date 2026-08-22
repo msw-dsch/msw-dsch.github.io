@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="壮大なる愚作：研究記録。建築：災害リスクについて。">
-    <link rel="icon" href="../icon.JPG">
-    <title>研究記録 | 壮大なる愚作</title>
+    <meta name="description" content="Five in a Row（2024）。壮大なる愚作 作品集より。">
+    <link rel="icon" href="../../icon.JPG">
+    <title>Five in a Row | 壮大なる愚作</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/score.css">
+    <link rel="stylesheet" href="../../assets/score.css">
 </head>
 <body>
     <header class="page-header">
@@ -41,22 +41,32 @@
         </svg>
         <div class="header-text">
             <a class="back-link" href="/index.html">← index.html</a>
-            <p class="eyebrow">壮大なる愚作</p>
-            <h1 class="title">研究記録</h1>
-            <p class="deck">建築：災害リスクについて，僭越ながら研究のご紹介．</p>
+            <p class="eyebrow">作品 ｜ 2024</p>
+            <h1 class="title">Five in a Row</h1>
+            <p class="deck">番号なし作品．詳細は未着手．</p>
         </div>
     </header>
 
     <div class="page">
         <section class="article-body">
-            <p class="note">本文は未着手です．公開でき次第，記事はスコア譜（<a href="/index.html#score-frame">index.html</a>）にも音符として追加されます．なお，仕組みの確認用に，本物の研究記録に代わる<a href="/demo/research-note-1/index.html">デモ記事</a>を用意しています．</p>
+            <p class="note">作曲時期・編成・解説など，詳細情報はまだ書けていません．公開初演が行われた番号なし作品の一つです．</p>
         </section>
+
+        <div class="score-frame" id="score-frame">
+            <span class="corner-bl"></span><span class="corner-br"></span>
+            <div id="score-canvas-mount"></div>
+        </div>
     </div>
 
     <footer class="site-footer">
         <p>© 2024 壮大なる愚作 MSW-DSCH</p>
     </footer>
 
-    <script src="../assets/score.js"></script>
+    <script src="/assets/score-data.js"></script>
+    <script>
+        window.SCORE_FOCUS_ID = "comp-five-in-a-row";
+        window.SCORE_HOME_HREF = "/index.html#score-frame";
+    </script>
+    <script src="/assets/score.js"></script>
 </body>
 </html>

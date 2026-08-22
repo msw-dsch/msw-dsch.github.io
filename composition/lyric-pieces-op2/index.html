@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="壮大なる愚作：研究記録。建築：災害リスクについて。">
-    <link rel="icon" href="../icon.JPG">
-    <title>研究記録 | 壮大なる愚作</title>
+    <meta name="description" content="Lyric Pieces Op. 2（2021）。ピアノ独奏，約12分。壮大なる愚作 作品集より。">
+    <link rel="icon" href="../../icon.JPG">
+    <title>Lyric Pieces Op. 2 | 壮大なる愚作</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/score.css">
+    <link rel="stylesheet" href="../../assets/score.css">
 </head>
 <body>
     <header class="page-header">
@@ -41,22 +41,38 @@
         </svg>
         <div class="header-text">
             <a class="back-link" href="/index.html">← index.html</a>
-            <p class="eyebrow">壮大なる愚作</p>
-            <h1 class="title">研究記録</h1>
-            <p class="deck">建築：災害リスクについて，僭越ながら研究のご紹介．</p>
+            <p class="eyebrow">作品 ｜ 2021</p>
+            <h1 class="title">Lyric Pieces Op. 2</h1>
+            <p class="deck">解説文は未着手．</p>
         </div>
     </header>
 
     <div class="page">
         <section class="article-body">
-            <p class="note">本文は未着手です．公開でき次第，記事はスコア譜（<a href="/index.html#score-frame">index.html</a>）にも音符として追加されます．なお，仕組みの確認用に，本物の研究記録に代わる<a href="/demo/research-note-1/index.html">デモ記事</a>を用意しています．</p>
+            <table style="border-collapse:collapse;margin:0 0 24px;font-size:14px;color:var(--ink-soft);">
+                <tr><td style="color:var(--ink-faint);width:100px;padding:3px 14px 3px 0;">作曲時期</td><td>2021年8月〜9月ごろ</td></tr>
+                <tr><td style="color:var(--ink-faint);padding:3px 14px 3px 0;">初演</td><td> - </td></tr>
+                <tr><td style="color:var(--ink-faint);padding:3px 14px 3px 0;">編成</td><td>ピアノ独奏</td></tr>
+                <tr><td style="color:var(--ink-faint);padding:3px 14px 3px 0;">演奏時間</td><td>約12分</td></tr>
+            </table>
+            <p class="note">解説文はまだ書けていません．</p>
         </section>
+
+        <div class="score-frame" id="score-frame">
+            <span class="corner-bl"></span><span class="corner-br"></span>
+            <div id="score-canvas-mount"></div>
+        </div>
     </div>
 
     <footer class="site-footer">
         <p>© 2024 壮大なる愚作 MSW-DSCH</p>
     </footer>
 
-    <script src="../assets/score.js"></script>
+    <script src="/assets/score-data.js"></script>
+    <script>
+        window.SCORE_FOCUS_ID = "comp-lyric-pieces";
+        window.SCORE_HOME_HREF = "/index.html#score-frame";
+    </script>
+    <script src="/assets/score.js"></script>
 </body>
 </html>

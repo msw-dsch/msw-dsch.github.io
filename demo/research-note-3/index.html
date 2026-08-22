@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="壮大なる愚作：研究記録。建築：災害リスクについて。">
-    <link rel="icon" href="../icon.JPG">
-    <title>研究記録 | 壮大なる愚作</title>
+    <meta name="robots" content="noindex">
+    <meta name="description" content="デモ記事。スコア譜の仕組みを示すための仮データ。">
+    <link rel="icon" href="../../icon.JPG">
+    <title>不確実性の記述について（デモ） | 壮大なる愚作</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/score.css">
+    <link rel="stylesheet" href="../../assets/score.css">
 </head>
 <body>
     <header class="page-header">
@@ -41,22 +42,34 @@
         </svg>
         <div class="header-text">
             <a class="back-link" href="/index.html">← index.html</a>
-            <p class="eyebrow">壮大なる愚作</p>
-            <h1 class="title">研究記録</h1>
-            <p class="deck">建築：災害リスクについて，僭越ながら研究のご紹介．</p>
+            <p class="eyebrow">研究メモ（デモ） ｜ 2024</p>
+            <h1 class="title">不確実性の記述について</h1>
+            <p class="deck">これはデモ記事です．</p>
         </div>
     </header>
 
     <div class="page">
+        <div class="demo-banner">DEMO CONTENT — これは実際の記事ではなく，スコア譜の仕組みを示すための仮のプレースホルダーです．本文はダミーであり，実際の研究内容ではありません．</div>
         <section class="article-body">
-            <p class="note">本文は未着手です．公開でき次第，記事はスコア譜（<a href="/index.html#score-frame">index.html</a>）にも音符として追加されます．なお，仕組みの確認用に，本物の研究記録に代わる<a href="/demo/research-note-1/index.html">デモ記事</a>を用意しています．</p>
+            <p>連作を持たない単独の研究メモ（デモ）の例です．スコア譜上では連桁を持たない単独の音符として表示されます．</p>
+            <p>実際に本文が書かれた際は，このページの内容はすべて置き換えられます．</p>
         </section>
+
+        <div class="score-frame" id="score-frame">
+            <span class="corner-bl"></span><span class="corner-br"></span>
+            <div id="score-canvas-mount"></div>
+        </div>
     </div>
 
     <footer class="site-footer">
         <p>© 2024 壮大なる愚作 MSW-DSCH</p>
     </footer>
 
-    <script src="../assets/score.js"></script>
+    <script src="/assets/score-data.js"></script>
+    <script>
+        window.SCORE_FOCUS_ID = "demo-research-3";
+        window.SCORE_HOME_HREF = "/index.html#score-frame";
+    </script>
+    <script src="/assets/score.js"></script>
 </body>
 </html>

@@ -1,0 +1,229 @@
+/* 壮大なる愚作 — 共通スタイル（楽譜としてのグラフ） */
+
+:root {
+  --paper:       #e6e1d2;
+  --paper-2:     #ddd7c5;
+  --panel:       #ede8db;
+  --ink:         #1c1a17;
+  --ink-soft:    #57534a;
+  --ink-faint:   #8b8579;
+  --hair:        #c9c2ac;
+
+  --k-yellow:    #e2a530;
+  --k-red:       #bd3a2a;
+  --k-blue:      #3f6fa0;
+  --k-blue-deep: #1f3550;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  font-family: 'PT Serif', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  font-size: 17px;
+  line-height: 1.75;
+  padding: 0 24px 96px;
+  background-image:
+    linear-gradient(var(--hair) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hair) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+  background-attachment: local;
+}
+
+a { color: inherit; }
+
+.page { max-width: 1120px; margin: 0 auto; position: relative; }
+
+/* ---- ナビゲーションアイコン（カンディンスキー《小さな世界》より） ---- */
+
+.hotspot { cursor: pointer; transform-origin: center; transform-box: fill-box; transition: transform 0.15s ease, opacity 0.15s ease; }
+.hotspot .shape { opacity: 0.82; }
+.hotspot:hover, .hotspot:focus-visible { transform: scale(1.06); }
+.hotspot:hover .shape, .hotspot:focus-visible .shape { opacity: 1; }
+.hotspot:focus-visible { outline: none; }
+.hotspot:focus-visible .shape { stroke: var(--ink); stroke-width: 1.5; }
+
+.icon-caption {
+  font-family: 'PT Mono', monospace;
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin: 6px 0 0;
+  min-height: 18px;
+}
+.icon-caption b { color: var(--k-red); font-weight: 600; }
+
+/* ---- index.html: フルページ・ヒーロー ---- */
+
+.hero-full {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-bottom: 1.5px solid var(--ink);
+  background: var(--paper);
+}
+.icon-full { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hero-text { position: relative; z-index: 1; max-width: 640px; padding: 48px clamp(24px, 5vw, 64px) 64px; }
+.scroll-cue {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+  font-family: 'PT Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-faint); display: flex; flex-direction: column; align-items: center; gap: 6px;
+  z-index: 1; pointer-events: none;
+}
+
+/* ---- 他ページ: コンパクトヘッダー ---- */
+
+.page-header {
+  position: relative;
+  padding: 40px 0 24px;
+  border-bottom: 1.5px solid var(--ink);
+  overflow: hidden;
+}
+.icon-compact { position: absolute; top: -30px; right: -20px; width: 200px; height: 200px; }
+.page-header .header-text { position: relative; z-index: 1; max-width: 640px; }
+.page-header .back-link {
+  font-family: 'PT Mono', monospace; font-size: 12px; color: var(--k-red);
+  border-bottom: 1px solid currentColor; text-decoration: none; display: inline-block; margin-bottom: 14px;
+}
+
+.eyebrow {
+  font-family: 'Jost', sans-serif;
+  font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--k-red); margin: 0 0 16px; display: flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--k-red); display: inline-block; }
+
+h1.title {
+  font-family: 'Jost', sans-serif; font-weight: 600;
+  font-size: clamp(32px, 5vw, 52px); line-height: 1.08; margin: 0 0 12px; text-wrap: balance;
+}
+.page-header h1.title { font-size: clamp(26px, 4vw, 38px); }
+
+p.deck { font-style: italic; font-size: 18px; color: var(--ink-soft); max-width: 58ch; margin: 0; }
+.page-header p.deck { font-size: 16px; }
+
+/* ---- 本文セクション共通 ---- */
+
+section.intro, section.after, section.article-body { max-width: 68ch; padding: 36px 0 8px; scroll-margin-top: 24px; }
+section.intro p, section.after p, section.article-body p { margin: 0 0 18px; }
+p.note {
+  font-family: 'PT Mono', monospace; font-size: 13px; line-height: 1.85; color: var(--ink-soft);
+  border-left: 2px solid var(--k-red); padding-left: 16px;
+}
+p.ref { font-family: 'PT Mono', monospace; font-size: 12px; color: var(--ink-faint); }
+
+section.after h2, section.article-body h2 { font-family: 'Jost', sans-serif; font-weight: 600; font-size: 21px; margin: 32px 0 14px; }
+section.after ul { margin: 0 0 16px; padding-left: 20px; color: var(--ink-soft); }
+section.after li { margin-bottom: 8px; }
+
+/* index.htmlの固定セクション（Identity / Contact / Help） */
+section.site-section {
+  max-width: 68ch; padding: 44px 0; border-top: 1px dashed var(--hair); scroll-margin-top: 24px;
+}
+section.site-section .eyebrow { margin-bottom: 14px; }
+section.site-section h2 {
+  font-family: 'Jost', sans-serif; font-weight: 600; font-size: 26px; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 0.02em;
+}
+section.site-section p { margin: 0 0 14px; color: var(--ink-soft); max-width: 60ch; }
+section.site-section .fake-link { color: var(--k-red); border-bottom: 1px solid currentColor; }
+section.site-section .cta-link {
+  display: inline-block; margin-top: 6px; font-family: 'PT Mono', monospace; font-size: 13px;
+  color: var(--k-red); border: 1px solid var(--k-red); padding: 8px 16px;
+}
+section.site-section .cta-link:hover { background: var(--k-red); color: var(--panel); }
+
+/* ---- 作品カード（旧sticker相当） ---- */
+
+.piece {
+  border: 1px solid var(--hair); background: var(--panel); padding: 24px 26px; margin: 24px 0;
+}
+.piece h3 { font-family: 'Jost', sans-serif; font-weight: 600; font-size: 19px; margin: 0 0 12px; }
+.piece table { border-collapse: collapse; margin: 0 0 16px; font-size: 14px; color: var(--ink-soft); }
+.piece table td { padding: 3px 14px 3px 0; vertical-align: top; }
+.piece table td:first-child { color: var(--ink-faint); width: 90px; }
+.piece p { margin: 0 0 12px; }
+.piece p:last-child { margin-bottom: 0; }
+.piece .piece-link { font-family: 'PT Mono', monospace; font-size: 13px; color: var(--k-red); border-bottom: 1px solid currentColor; text-decoration: none; }
+.piece .pending { font-family: 'PT Mono', monospace; font-size: 12.5px; color: var(--ink-faint); }
+
+.citation { font-style: italic; font-size: 12.5px; color: var(--ink-soft); }
+.citation h4 { margin: 0 0 8px; font-family: 'Jost', sans-serif; font-style: normal; font-size: 14px; }
+.citation ul { margin: 0; padding-left: 18px; }
+.citation li { margin-bottom: 6px; }
+.cyrillic { font-family: 'PT Serif', serif; }
+
+/* ---- デモ記事バナー ---- */
+
+.demo-banner {
+  font-family: 'PT Mono', monospace; font-size: 12.5px; color: var(--k-red);
+  border: 1px dashed var(--k-red); padding: 10px 16px; margin-bottom: 28px; max-width: 68ch;
+}
+
+/* ---- スコア譜／パート譜パネル ---- */
+
+.score-frame { position: relative; margin-top: 32px; background: var(--panel); border: 1.5px solid var(--ink); scroll-margin-top: 24px; }
+.score-frame::before, .score-frame::after, .score-frame .corner-br, .score-frame .corner-bl {
+  content: ""; position: absolute; width: 16px; height: 16px; pointer-events: none; z-index: 2;
+}
+.score-frame::before { top: -1.5px; left: -1.5px; border-top: 2.5px solid var(--k-red); border-left: 2.5px solid var(--k-red); }
+.score-frame::after  { top: -1.5px; right: -1.5px; border-top: 2.5px solid var(--k-red); border-right: 2.5px solid var(--k-red); }
+.score-frame .corner-bl { bottom: -1.5px; left: -1.5px; border-bottom: 2.5px solid var(--k-red); border-left: 2.5px solid var(--k-red); }
+.score-frame .corner-br { bottom: -1.5px; right: -1.5px; border-bottom: 2.5px solid var(--k-red); border-right: 2.5px solid var(--k-red); }
+
+.score-toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+  padding: 16px 22px; border-bottom: 1px solid var(--hair); position: relative; z-index: 1;
+}
+.score-toolbar .label { font-family: 'PT Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); width: 100%; }
+.score-toolbar .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-left: auto; }
+
+button.act, a.act {
+  font-family: 'PT Mono', monospace; font-size: 12.5px; letter-spacing: 0.02em;
+  color: var(--k-red); background: transparent; border: 1px solid var(--k-red);
+  padding: 8px 14px; cursor: pointer; text-decoration: none; display: inline-block;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+button.act:hover, a.act:hover { background: var(--k-red); color: var(--panel); }
+button.act:focus-visible, a.act:focus-visible { outline: 2px solid var(--k-blue); outline-offset: 2px; }
+
+.canvas-wrap { position: relative; padding: 8px 6px 4px; overflow-x: auto; }
+.kandinsky-bg { position: absolute; inset: 8px 6px 4px; width: calc(100% - 12px); height: calc(100% - 12px); pointer-events: none; z-index: 0; }
+canvas.score-canvas { display: block; width: 100%; height: auto; cursor: crosshair; position: relative; z-index: 1; }
+
+.tooltip {
+  position: absolute; pointer-events: none; background: var(--ink); border: 1px solid var(--ink);
+  padding: 8px 12px; font-family: 'PT Mono', monospace; font-size: 12.5px; color: var(--panel);
+  max-width: 260px; transform: translate(-50%, -100%); opacity: 0; transition: opacity 0.1s ease;
+  z-index: 5; white-space: nowrap;
+}
+.tooltip .cat { display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-2); margin-bottom: 3px; }
+
+.readout {
+  border-top: 1px solid var(--hair); padding: 16px 22px 20px; font-family: 'PT Mono', monospace;
+  font-size: 13px; color: var(--ink-soft); min-height: 20px; position: relative; z-index: 1;
+}
+.readout b { color: var(--ink); }
+
+/* ---- フッター ---- */
+
+footer.site-footer {
+  margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--ink);
+  font-family: 'PT Mono', monospace; font-size: 12px; color: var(--ink-faint);
+  max-width: 1120px; margin-left: auto; margin-right: auto;
+}
+
+@media (max-width: 640px) {
+  .hero-full { min-height: 100svh; align-items: center; }
+  .hero-text { padding: 32px 20px 48px; }
+  .icon-compact { width: 130px; height: 130px; top: -16px; right: -30px; }
+  .score-toolbar { padding: 14px 16px; }
+  .readout { padding: 14px 16px 16px; }
+}
