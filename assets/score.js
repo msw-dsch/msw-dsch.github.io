@@ -213,8 +213,27 @@
       updateChrome();
     }
 
+    // 関連の強さ（連作＞時期の近さ・pc1の近さ）から，次の記事への遷移確率を決める
+    function relationWeight(focus, other) {
+      var edge = adj[focus.id].filter(function (o) { return o.to === other.id; })[0];
+      if (edge) return edge.w;
+      var dayDiff = Math.abs(focus.date.getTime() - other.date.getTime()) / 86400000;
+      var timeScore = 1 / (1 + dayDiff / 180);
+      var pc1Score = 1 / (1 + Math.abs(focus.pc1 - other.pc1) * 3);
+      return 0.12 * (timeScore * 0.5 + pc1Score * 0.5);
+    }
+    function pickNextByRelation(focus) {
+      var candidates = NODES.filter(function (n) { return n.id !== focus.id; });
+      var weights = candidates.map(function (n) { return relationWeight(focus, n); });
+      var total = weights.reduce(function (a, b) { return a + b; }, 0);
+      var r = Math.random() * total;
+      for (var i = 0; i < candidates.length; i++) { r -= weights[i]; if (r <= 0) return candidates[i]; }
+      return candidates[candidates.length - 1];
+    }
+
     function updateChrome() {
       controls.innerHTML = "";
+      readout.innerHTML = "";
       if (mode === "score") {
         toolbarLabel.textContent = "スコア譜 — " + NODES.length + "件（うちデモ" + NODES.filter(function (n) { return n.dummy; }).length + "件）";
         var wanderBtn = document.createElement("button");
@@ -224,14 +243,19 @@
           location.href = pick.url;
         });
         controls.appendChild(wanderBtn);
-        readout.innerHTML = "<b>スコア譜．</b> 音符をクリックすると，その記事へ移動します．破線の輪郭はデモ用の仮記事です．";
       } else {
         var n = byId[focusId];
         toolbarLabel.textContent = "パート譜 — 「" + n.title + "」を起点に";
         var backLink = document.createElement("a");
         backLink.className = "act"; backLink.href = homeHref; backLink.textContent = "◀ スコア譜（全体）へ";
         controls.appendChild(backLink);
-        readout.innerHTML = "<b>パート譜．</b> " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "") + " を中心に，時系列・連作関係の近い" + (activeIds.length - 1) + "件を抽出．声部は音部記号と符頭の形・色で示す（この記事は" + n.voice + "）．";
+
+        var nextBtn = document.createElement("button");
+        nextBtn.className = "act next-btn"; nextBtn.type = "button"; nextBtn.textContent = "次の記事へ →";
+        nextBtn.addEventListener("click", function () {
+          location.href = pickNextByRelation(n).url;
+        });
+        readout.appendChild(nextBtn);
       }
     }
 
@@ -252,36 +276,21 @@
       return s;
     }
 
-    // 音部記号を暗示する抽象的な記号（治療クレフの正確な字形ではなく，声部を示す最小限のしるし）
+    // 音部記号は Noto Music（Unicode Musical Symbols）の実際の字形を使用する。
+    // フォントの行送り基準ではなく，実際のグリフの見た目の高さ（actualBoundingBox）を
+    // 測定して中心を合わせる（フォントごとの余白の違いに影響されないようにするため）。
+    var CLEF_GLYPH = { treble: "\u{1D11E}", bass: "\u{1D122}" };
+    var CLEF_BASE_SIZE = { treble: 50, bass: 38 };
     function drawClef(cx, cy, kind, color, scale) {
       ctx.save();
-      ctx.translate(cx, cy);
-      ctx.scale(scale, scale);
-      ctx.strokeStyle = color; ctx.fillStyle = color;
-      ctx.lineCap = "round"; ctx.lineJoin = "round";
-      if (kind === "treble") {
-        ctx.lineWidth = 1.7;
-        ctx.beginPath();
-        ctx.moveTo(0, -17);
-        ctx.bezierCurveTo(9, -17, 9, -6, 0, -3);
-        ctx.bezierCurveTo(-9, 0, -9, 9, 0, 11);
-        ctx.bezierCurveTo(6, 12, 6, 5, 0, 3);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(0, 14, 2.4, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.lineWidth = 2.4;
-        ctx.beginPath();
-        ctx.arc(-1, -2, 8, -Math.PI * 0.1, Math.PI * 0.9);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(4, -9, 1.7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(4, 5, 1.7, 0, Math.PI * 2);
-        ctx.fill();
-      }
+      ctx.fillStyle = color;
+      ctx.font = Math.round(CLEF_BASE_SIZE[kind] * scale) + "px 'Noto Music'";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      var glyph = CLEF_GLYPH[kind];
+      var m = ctx.measureText(glyph);
+      var visualCenterOffset = (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2;
+      ctx.fillText(glyph, cx, cy + visualCenterOffset);
       ctx.restore();
     }
 
@@ -434,6 +443,7 @@
 
     window.addEventListener("resize", resize);
     resize();
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(draw); }
   }
 
   document.addEventListener("DOMContentLoaded", function () {

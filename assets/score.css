@@ -207,10 +207,14 @@ canvas.score-canvas { display: block; width: 100%; height: auto; cursor: crossha
 .tooltip .cat { display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-2); margin-bottom: 3px; }
 
 .readout {
-  border-top: 1px solid var(--hair); padding: 16px 22px 20px; font-family: 'PT Mono', monospace;
-  font-size: 13px; color: var(--ink-soft); min-height: 20px; position: relative; z-index: 1;
+  border-top: 1px solid var(--hair); padding: 18px 22px; position: relative; z-index: 1;
+  display: flex; justify-content: center;
 }
-.readout b { color: var(--ink); }
+.readout:empty { display: none; }
+.readout .next-btn {
+  font-size: 14px; padding: 12px 28px; background: var(--ink); color: var(--panel); border-color: var(--ink);
+}
+.readout .next-btn:hover { background: var(--k-red); border-color: var(--k-red); }
 
 /* ---- フッター ---- */
 
