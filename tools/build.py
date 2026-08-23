@@ -25,7 +25,7 @@ contents/<slug>/source.html を読み込み，
     kind    種別（例：作品，楽曲探索，研究メモ）。サイト表示には出さない内部用の分類で，
             source.html を読む人（自分）が識別しやすくするためだけに使う
     date    投稿日（YYYY-MM-DD）
-    pc1     記事ベクトルの主成分の仮値（-1〜1）
+    pc1     記事ベクトルの第1主成分の仮値（-1〜1）。index.htmlのスコア譜ではソプラノ段の音高になる
 
 省略可能な項目（省略時は自動で補う）:
     date_exact  日付が正確なら true，年しか分からない等の推定なら false（既定 true）
@@ -36,6 +36,10 @@ contents/<slug>/source.html を読み込み，
                 カテゴリ名は出さない方針（記事は分類ラベルを名乗らない）
     deck        見出し下の一言（既定：dummyならデモ表記，通常は空）
     description meta descriptionタグの内容（既定：自動生成）
+    pc2/pc3/pc4 第2〜4主成分の仮値（-1〜1）。index.htmlのスコア譜ではそれぞれ
+                アルト／テノール／バス段の音高になり，4段で1つの記事＝1つの和音を表す
+                （パート譜では使わず，pc1のみ参照する）。省略時はslugから決定論的に
+                生成した仮値で自動的に埋める（毎回同じ値になるが，本文からの算出ではない）
 
 例:
     <!--meta
@@ -47,6 +51,7 @@ contents/<slug>/source.html を読み込み，
     -->
     <p>本文...</p>
 """
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -171,6 +176,13 @@ def truthy(value, default=False):
     return value.strip().lower() in ("true", "yes", "1")
 
 
+def hash_pc(slug, axis):
+    """slugとaxis名から-1〜1の決定論的な仮値を作る（pc2〜pc4の既定値用）。"""
+    digest = hashlib.sha256(f"{slug}:{axis}".encode("utf-8")).hexdigest()
+    n = int(digest[:8], 16)
+    return round((n / 0xFFFFFFFF) * 2 - 1, 4)
+
+
 def build_one(slug_dir):
     slug = slug_dir.name
     meta, body = parse_source(slug_dir / "source.html")
@@ -185,6 +197,9 @@ def build_one(slug_dir):
     year = date[:4]
     date_exact = truthy(meta.get("date_exact"), default=True)
     pc1 = float(meta["pc1"])
+    pc2 = float(meta["pc2"]) if meta.get("pc2") else hash_pc(slug, "pc2")
+    pc3 = float(meta["pc3"]) if meta.get("pc3") else hash_pc(slug, "pc3")
+    pc4 = float(meta["pc4"]) if meta.get("pc4") else hash_pc(slug, "pc4")
     series = meta.get("series") or None
     dummy = truthy(meta.get("dummy"), default=False)
 
@@ -219,6 +234,9 @@ def build_one(slug_dir):
         "isDateExact": date_exact,
         "kind": kind,
         "pc1": pc1,
+        "pc2": pc2,
+        "pc3": pc3,
+        "pc4": pc4,
         "series": series,
         "dummy": dummy,
     }
@@ -248,6 +266,9 @@ def write_score_data(nodes):
         lines.append(f'      isDateExact: {js_value(n["isDateExact"])},')
         lines.append(f'      kind: {js_value(n["kind"])},')
         lines.append(f'      pc1: {js_value(n["pc1"])},')
+        lines.append(f'      pc2: {js_value(n["pc2"])},')
+        lines.append(f'      pc3: {js_value(n["pc3"])},')
+        lines.append(f'      pc4: {js_value(n["pc4"])},')
         lines.append(f'      series: {js_value(n["series"])},')
         lines.append(f'      dummy: {js_value(n["dummy"])}')
         lines.append("    }" + comma)

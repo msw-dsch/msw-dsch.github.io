@@ -17,6 +17,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "日記（デモ）",
       pc1: -0.15,
+      pc2: 0.0341,
+      pc3: -0.86,
+      pc4: 0.9766,
       series: "demo-diary",
       dummy: true
     },
@@ -28,6 +31,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "日記（デモ）",
       pc1: -0.25,
+      pc2: 0.0619,
+      pc3: 0.5236,
+      pc4: 0.0334,
       series: "demo-diary",
       dummy: true
     },
@@ -39,6 +45,9 @@ window.SCORE_DATA = {
       isDateExact: true,
       kind: "作品",
       pc1: 0.6,
+      pc2: -0.3888,
+      pc3: -0.4709,
+      pc4: -0.6095,
       series: null,
       dummy: false
     },
@@ -50,6 +59,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "作品",
       pc1: 0.5,
+      pc2: 0.4482,
+      pc3: -0.4401,
+      pc4: -0.6005,
       series: null,
       dummy: false
     },
@@ -61,6 +73,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "作品",
       pc1: -0.05,
+      pc2: 0.7733,
+      pc3: 0.3035,
+      pc4: 0.6707,
       series: "anti-composition",
       dummy: false
     },
@@ -72,6 +87,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "楽曲探索",
       pc1: 0.15,
+      pc2: -0.4659,
+      pc3: -0.0068,
+      pc4: -0.8129,
       series: null,
       dummy: false
     },
@@ -83,6 +101,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "作品",
       pc1: -0.2,
+      pc2: -0.8938,
+      pc3: 0.1001,
+      pc4: -0.5653,
       series: "anti-composition",
       dummy: false
     },
@@ -94,6 +115,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "研究メモ（デモ）",
       pc1: -0.42,
+      pc2: 0.9661,
+      pc3: -0.1984,
+      pc4: 0.7001,
       series: "demo-research",
       dummy: true
     },
@@ -105,6 +129,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "研究メモ（デモ）",
       pc1: -0.37,
+      pc2: 0.2619,
+      pc3: -0.2942,
+      pc4: 0.2624,
       series: "demo-research",
       dummy: true
     },
@@ -116,6 +143,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "作品",
       pc1: 0.7,
+      pc2: -0.8901,
+      pc3: -0.2216,
+      pc4: -0.8351,
       series: null,
       dummy: false
     },
@@ -127,6 +157,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "研究メモ（デモ）",
       pc1: -0.46,
+      pc2: -0.0443,
+      pc3: -0.7455,
+      pc4: 0.9369,
       series: null,
       dummy: true
     },
@@ -138,6 +171,9 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "エッセイ（デモ）",
       pc1: 0.11,
+      pc2: -0.5591,
+      pc3: -0.352,
+      pc4: -0.5807,
       series: null,
       dummy: true
     }

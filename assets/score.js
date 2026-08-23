@@ -2,14 +2,18 @@
  * 壮大なる愚作 — スコア譜／パート譜の描画エンジン（楽譜としてのグラフ）
  *
  * window.SCORE_DATA を読み込み，
- *   - window.SCORE_FOCUS_ID が未設定  → スコア譜（index.html。全ノード，SATB4段）
- *   - window.SCORE_FOCUS_ID が設定済 → パート譜（記事ページ。その記事を中心とした近傍を1段の譜表に）
+ *   - window.SCORE_FOCUS_ID が未設定  → スコア譜（index.html）
+ *   - window.SCORE_FOCUS_ID が設定済 → パート譜（記事ページ）
  * を #score-canvas-mount 内の <canvas> に描画する．
  *
- * 各ノードの声部（S/A/T/B）は，全ノードのpc1（記事ベクトルの主成分の仮値）の
- * 四分位から一度だけグローバルに決まる固定属性．どちらの譜面でも同じ声部として扱われる．
- * パート譜では声部ごとに段を分けず，1段の譜表上に音部記号だけで暗示する．
- * 連桁（符幹をつなぐ太線）は，同一連作（series）の投稿どうしのみに限定．
+ * スコア譜（index.html）：4段（S/A/T/B）はそれぞれ記事ベクトルの第1〜4主成分
+ * （pc1〜pc4）の音高を表す．つまり1つの記事＝1つの和音として，同じ横位置に
+ * 4つの音符が同時に鳴る．薄い縦線で4つの音符を結び，1つの記事であることを示す．
+ * 連桁（符幹をつなぐ太線）は，同一連作（series）の記事どうしに，4段すべてで
+ * 並行して引かれる．
+ *
+ * パート譜（記事ページ）：声部（S/A/T/B）はpc1の四分位から決まる固定属性で，
+ * 1段の譜表にpc1のみを連続的な音高として表示する（4声部化はしない）．
  */
 (function () {
   "use strict";
@@ -50,10 +54,12 @@
       B: { row: 3, shape: "diamond",  color: "#bd3a2a", clef: "bass",   clefScale: 1.15 }
     };
     var VOICE_KEYS = ["S", "A", "T", "B"];
+    var PC_KEY = { S: "pc1", A: "pc2", T: "pc3", B: "pc4" };
 
     var NODES = window.SCORE_DATA.nodes.map(function (n) {
       return {
-        id: n.id, title: n.title, url: n.url, kind: n.kind, pc1: n.pc1,
+        id: n.id, title: n.title, url: n.url, kind: n.kind,
+        pc1: n.pc1, pc2: n.pc2, pc3: n.pc3, pc4: n.pc4,
         series: n.series, dummy: !!n.dummy,
         date: new Date(n.date + "T00:00:00")
       };
@@ -61,7 +67,8 @@
     var byId = {};
     NODES.forEach(function (n) { byId[n.id] = n; });
 
-    // 声部はpc1の四分位から一度だけグローバルに決める（表示範囲に依存しない固定属性）
+    // パート譜用の「主たる声部」は，pc1の四分位から一度だけグローバルに決める
+    // （スコア譜の4段はpc1〜pc4を直接使うので，この声部分類は使わない）
     (function assignVoices() {
       var sorted = NODES.slice().sort(function (a, b) { return a.pc1 - b.pc1; });
       var n = sorted.length;
@@ -75,7 +82,7 @@
         var bandIdx = v >= b3 ? 0 : v >= b2 ? 1 : v >= b1 ? 2 : 3; // 0=S 1=A 2=T 3=B
         var lo = [b3, b2, b1, b0][bandIdx], hi = [b4, b3, b2, b1][bandIdx];
         node.voice = VOICE_KEYS[bandIdx];
-        node.bandLocal = hi > lo ? (v - lo) / (hi - lo) : 0.5; // 0..1, そのバンド内での相対位置
+        node.bandLocal = hi > lo ? (v - lo) / (hi - lo) : 0.5;
       });
     })();
 
@@ -132,7 +139,7 @@
 
     var layout = null, activeIds = [], activeMin, activeMax;
     var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-    var PAD_L = 108, PAD_R = 40, PAD_TOP = 40, ROW_H = 132, LINE_GAP = 8, BOTTOM_AXIS = 34;
+    var PAD_L = 108, PAD_R = 40, PAD_TOP = 40, ROW_H = 150, LINE_GAP = 8, BOTTOM_AXIS = 34;
     var PART_BASE_OFFSET = 110, PART_MARGIN = 110;
 
     var fullMinDate = new Date(Math.min.apply(null, NODES.map(function (n) { return n.date.getTime(); })));
@@ -162,6 +169,8 @@
       return { min: nb.min, max: nb.max };
     }
 
+    function staffBaseY(row) { return PAD_TOP + row * ROW_H + 2 * LINE_GAP; }
+
     function computeLayout(cssWidth, ids, rangeMin, rangeMax) {
       var innerW = cssWidth - PAD_L - PAD_R;
       var span = rangeMax.getTime() - rangeMin.getTime();
@@ -174,20 +183,22 @@
         var jitterX = (mulberry32(hashStr(id + "x"))() - 0.5) * 10;
         var x = PAD_L + clamp(t, 0, 1) * innerW + jitterX;
 
-        var baseY, step;
         if (mode === "score") {
-          var bandStep = 1 + Math.round(clamp(n2.bandLocal, 0, 1) * 3);
-          var dir = (n2.voice === "S" || n2.voice === "A") ? -1 : 1;
-          step = dir * bandStep;
-          baseY = PAD_TOP + VOICES[n2.voice].row * ROW_H + 2 * LINE_GAP;
+          var voicesPos = {};
+          VOICE_KEYS.forEach(function (vk) {
+            var pcVal = n2[PC_KEY[vk]] || 0;
+            var step = clamp(Math.round(pcVal * 8), -16, 16);
+            var baseY = staffBaseY(VOICES[vk].row);
+            maxAbsStep = Math.max(maxAbsStep, Math.abs(step));
+            voicesPos[vk] = { x: x, y: baseY - step * (LINE_GAP / 2), step: step, baseY: baseY };
+          });
+          pos[id] = voicesPos;
         } else {
-          step = clamp(Math.round(n2.pc1 * 8), -16, 16);
-          baseY = PAD_TOP + PART_BASE_OFFSET;
+          var step = clamp(Math.round(n2.pc1 * 8), -16, 16);
+          var baseY = PAD_TOP + PART_BASE_OFFSET;
+          maxAbsStep = Math.max(maxAbsStep, Math.abs(step));
+          pos[id] = { x: x, y: baseY - step * (LINE_GAP / 2), step: step, baseY: baseY };
         }
-        maxAbsStep = Math.max(maxAbsStep, Math.abs(step));
-
-        var y = baseY - step * (LINE_GAP / 2);
-        pos[id] = { x: x, y: y, step: step, baseY: baseY };
       });
 
       var height = mode === "score"
@@ -294,8 +305,6 @@
       ctx.restore();
     }
 
-    function staffBaseY(row) { return PAD_TOP + row * ROW_H + 2 * LINE_GAP; }
-
     function drawStaffLines(baseY, width) {
       ctx.strokeStyle = "#b9b19a"; ctx.lineWidth = 1;
       for (var l = -2; l <= 2; l++) {
@@ -321,7 +330,6 @@
     }
 
     function drawTimeAxis() {
-      var lastRowBaseY = mode === "score" ? staffBaseY(3) : (PAD_TOP + PART_BASE_OFFSET);
       var startY = PAD_TOP - 12, endY = layout.height - BOTTOM_AXIS + 6;
       var span = activeMax.getTime() - activeMin.getTime();
       if (span <= 0) return;
@@ -352,9 +360,19 @@
       }
     }
 
-    function drawNotehead(n, p, opts) {
+    // score モードでは，1つの記事が4段にまたがる「和音」であることを薄い縦線で示す
+    function drawChordConnector(voicesPos) {
+      ctx.beginPath();
+      ctx.moveTo(voicesPos.S.x, voicesPos.S.y);
+      ctx.lineTo(voicesPos.B.x, voicesPos.B.y);
+      ctx.strokeStyle = "rgba(28,26,23,0.10)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function drawNotehead(n, p, voiceKey, opts) {
       opts = opts || {};
-      var v = VOICES[n.voice];
+      var v = VOICES[voiceKey];
       var color = opts.active ? "#bd3a2a" : v.color;
       var r = 5.6;
 
@@ -387,32 +405,61 @@
       p._stemTop = { x: p.x + (stemUp ? r - 1 : -(r - 1)), y: stemTopY };
     }
 
-    function drawBeam(e) {
-      var a = layout.pos[e[0]], b = layout.pos[e[1]];
-      if (!a || !a._stemTop || !b || !b._stemTop) return;
-      var w = e[2];
-      ctx.beginPath(); ctx.moveTo(a._stemTop.x, a._stemTop.y); ctx.lineTo(b._stemTop.x, b._stemTop.y);
+    function drawBeamSegment(p1, p2, w) {
+      ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y);
       ctx.strokeStyle = "rgba(28,26,23," + (0.35 + w * 0.45) + ")";
       ctx.lineWidth = 3 + w * 2.2; ctx.lineCap = "butt"; ctx.stroke();
+    }
+    function drawBeam(e) {
+      var w = e[2];
+      if (mode === "score") {
+        VOICE_KEYS.forEach(function (vk) {
+          var a = layout.pos[e[0]] && layout.pos[e[0]][vk];
+          var b = layout.pos[e[1]] && layout.pos[e[1]][vk];
+          if (a && a._stemTop && b && b._stemTop) drawBeamSegment(a._stemTop, b._stemTop, w);
+        });
+      } else {
+        var a = layout.pos[e[0]], b = layout.pos[e[1]];
+        if (a && a._stemTop && b && b._stemTop) drawBeamSegment(a._stemTop, b._stemTop, w);
+      }
     }
 
     function draw() {
       ctx.clearRect(0, 0, layout.width, layout.height);
       drawStaves();
       drawTimeAxis();
-      activeIds.forEach(function (id) { drawNotehead(byId[id], layout.pos[id], {}); });
-      EDGES.forEach(function (e) { if (layout.pos[e[0]] && layout.pos[e[1]]) drawBeam(e); });
-      if (mode === "part") drawNotehead(byId[focusId], layout.pos[focusId], { focus: true });
+      if (mode === "score") {
+        activeIds.forEach(function (id) { drawChordConnector(layout.pos[id]); });
+        activeIds.forEach(function (id) {
+          var n = byId[id], voicesPos = layout.pos[id];
+          VOICE_KEYS.forEach(function (vk) { drawNotehead(n, voicesPos[vk], vk, {}); });
+        });
+        EDGES.forEach(function (e) { if (layout.pos[e[0]] && layout.pos[e[1]]) drawBeam(e); });
+      } else {
+        activeIds.forEach(function (id) { drawNotehead(byId[id], layout.pos[id], byId[id].voice, {}); });
+        EDGES.forEach(function (e) { if (layout.pos[e[0]] && layout.pos[e[1]]) drawBeam(e); });
+        drawNotehead(byId[focusId], layout.pos[focusId], byId[focusId].voice, { focus: true });
+      }
     }
 
     function hitTest(mx, my) {
-      var best = null, bestD = 12;
-      activeIds.forEach(function (id) {
-        var p = layout.pos[id];
-        var d = Math.hypot(p.x - mx, p.y - my);
-        if (d < bestD) { bestD = d; best = id; }
-      });
-      return best;
+      var best = null, bestVoice = null, bestD = 12;
+      if (mode === "score") {
+        activeIds.forEach(function (id) {
+          VOICE_KEYS.forEach(function (vk) {
+            var p = layout.pos[id][vk];
+            var d = Math.hypot(p.x - mx, p.y - my);
+            if (d < bestD) { bestD = d; best = id; bestVoice = vk; }
+          });
+        });
+      } else {
+        activeIds.forEach(function (id) {
+          var p = layout.pos[id];
+          var d = Math.hypot(p.x - mx, p.y - my);
+          if (d < bestD) { bestD = d; best = id; bestVoice = byId[id].voice; }
+        });
+      }
+      return best ? { id: best, voice: bestVoice } : null;
     }
 
     canvas.addEventListener("mousemove", function (ev) {
@@ -420,12 +467,13 @@
       var mx = ev.clientX - rect.left, my = ev.clientY - rect.top;
       var hit = hitTest(mx, my);
       if (hit) {
-        var n = byId[hit];
+        var n = byId[hit.id];
+        var p = mode === "score" ? layout.pos[hit.id][hit.voice] : layout.pos[hit.id];
         var wrapRect = wrap.getBoundingClientRect();
         tooltip.style.opacity = "1";
-        tooltip.style.left = (rect.left - wrapRect.left + layout.pos[hit].x) + "px";
-        tooltip.style.top = (rect.top - wrapRect.top + layout.pos[hit].y - 20) + "px";
-        tooltip.querySelector(".cat").textContent = n.voice + " ｜ " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "") + (n.dummy ? "（デモ）" : "");
+        tooltip.style.left = (rect.left - wrapRect.left + p.x) + "px";
+        tooltip.style.top = (rect.top - wrapRect.top + p.y - 20) + "px";
+        tooltip.querySelector(".cat").textContent = hit.voice + " ｜ " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "") + (n.dummy ? "（デモ）" : "");
         tooltip.querySelector(".title").textContent = n.title + (n.id === focusId ? "（この記事）" : "");
         canvas.style.cursor = n.id === focusId ? "default" : "pointer";
       } else {
@@ -438,7 +486,7 @@
     canvas.addEventListener("click", function (ev) {
       var rect = canvas.getBoundingClientRect();
       var hit = hitTest(ev.clientX - rect.left, ev.clientY - rect.top);
-      if (hit && hit !== focusId) location.href = byId[hit].url;
+      if (hit && hit.id !== focusId) location.href = byId[hit.id].url;
     });
 
     window.addEventListener("resize", resize);
