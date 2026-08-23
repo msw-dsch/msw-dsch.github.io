@@ -16,9 +16,11 @@
 /
 ├─ index.html                        トップページ．全面のアイコンナビ＋前文＋スコア譜（総譜）＋Identity/Contact/Help
 ├─ icon.JPG                          サイトアイコン画像（ファビコンとして使用）
+├─ tools/
+│   └─ build.py                      記事ページ生成スクリプト（後述）
 ├─ assets/
 │   ├─ score.css                     全ページ共通スタイル（旧 style.css を置き換え）
-│   ├─ score-data.js                 スコア譜のデータ（実記事＋デモ記事）。単一情報源
+│   ├─ score-data.js                 スコア譜のデータ（build.pyが自動生成，直接編集しない）
 │   └─ score.js                      アイコンナビ／スコア譜・パート譜の描画エンジン
 ├─ introduction/index.html           略歴（本文未着手）
 ├─ research/index.html               研究記録（本文未着手。デモ記事へのリンクあり）
@@ -26,7 +28,9 @@
 ├─ composition/index.html            作品集：一覧ページ（受賞歴を含む）
 └─ contents/                         記事の実体はすべてここに平置き（カテゴリ別フォルダには分けない）
     ├─ festive-sonata-op1/           実記事：Festive Sonata Op. 1（末尾にパート譜）
-    ├─ lyric-pieces-op2/             実記事：Lyric Pieces Op. 2（解説文は未着手）
+    │   ├─ source.html               ← 編集するのはこちら（メタデータ＋本文）
+    │   └─ index.html                ← build.pyが生成する実ページ（直接編集しない）
+    ├─ lyric-pieces-op2/              実記事：Lyric Pieces Op. 2（解説文は未着手）
     ├─ staff-meeting-in-progress/    実記事：staff meeting in progress（詳細未着手）
     ├─ five-in-a-row/                実記事：Five in a Row（詳細未着手）
     ├─ roslavets/                    実記事：ロースラヴェツ
@@ -35,9 +39,18 @@
 
 各カテゴリの一覧ページ（`music/index.html`，`composition/index.html`）は記事の本体を持たず，`contents/` 内の該当ページへリンクするだけ．カテゴリ（作品・楽曲探索・研究記録）はスコア譜の声部を決める要素ではないため，URL構造でもカテゴリを前提にしない．
 
+## 記事の追加・編集（build.py）
+
+記事ページ（`contents/<slug>/index.html`）とスコアデータ（`assets/score-data.js`）は，どちらも `tools/build.py` が `contents/<slug>/source.html` から自動生成する．**手で直接編集するのは `source.html` だけでよい**．ヘッダー（アイコンナビ）・フッター・`<head>`まわりの定型部分や，DEMO CONTENTバナー・`noindex`タグの付与も自動で行われる．
+
+- 新しい記事を追加する：`contents/<新しいslug>/source.html` を新規作成し，`python tools/build.py` を実行する．
+- 既存の記事を編集する：該当する `source.html` を書き換えてから，同じくビルドスクリプトを実行する．
+- `source.html` の書式（メタデータの必須・省略可能項目，具体例）は `tools/build.py` 冒頭のdocstringに書いてある．
+- ビルド後に生成される `index.html` や `assets/score-data.js` は，次のビルドで上書きされるため直接編集しないこと．
+
 ## スコア譜（楽譜としてのグラフ）の仕組み
 
-- `assets/score-data.js` の `window.SCORE_DATA.nodes` が唯一のデータソース．各記事は `id`・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`（記事ベクトルの主成分の仮値，-1〜1）・`series`（連作ID，任意）・`dummy`（デモ記事かどうか）を持つ．
+- `assets/score-data.js` の `window.SCORE_DATA.nodes` が実行時の唯一のデータソース（ただし前述のとおりこのファイル自体はbuild.pyの生成物）．各記事は `id`（=フォルダ名のslug）・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`（記事ベクトルの主成分の仮値，-1〜1）・`series`（連作ID，任意）・`dummy`（デモ記事かどうか）を持つ．
 - 声部（S/A/T/B）は，全ノードの `pc1` の四分位から一度だけグローバルに決まる固定属性．どの記事がどの声部かは，スコア譜・パート譜のどちらで見ても変わらない．意味的な区分けは持たない．
 - 横位置は `date`．連桁（符幹をつなぐ太線）は同一 `series` の記事どうしのみに引かれる．
 - `assets/score.js` は `window.SCORE_FOCUS_ID` が未設定なら「スコア譜」（index.htmlの全ノードをSATB4段で），設定済みなら「パート譜」（その記事を中心とした近傍を1段の譜表に）を描画する．記事ページは `<script>` で `window.SCORE_FOCUS_ID` をセットしてから `score.js` を読み込む．
@@ -48,8 +61,8 @@
 
 ## 技術構成・制約
 
-- ビルドツール，静的サイトジェネレータ（Jekyllなど）は未使用．すべて素のHTML/CSSを直接編集して公開している．
-- 共通CSS/JS（`assets/score.css`・`assets/score.js`・`assets/score-data.js`）は外部ファイル化して重複を避けているが，各ページの `<header class="page-header">`（アイコンナビのSVGを含む）自体はインクルードの仕組みがないため手作業で複製している．ナビゲーションのリンク先を変えるには全ページの修正が必要（後述の既知の課題を参照）．
+- サイト自体はビルドツール，静的サイトジェネレータ（Jekyllなど）不使用で，GitHub Pagesにそのまま素のHTML/CSSを公開している．`tools/build.py` はこの方針に反するものではなく，記事追加時に手元で任意に実行するだけの補助スクリプト（実行しなくてもサイトの配信自体には影響しない）．
+- 共通CSS/JS（`assets/score.css`・`assets/score.js`）は外部ファイル化して重複を避けている．記事ページ（`contents/<slug>/index.html`）のヘッダー等の定型部分は `tools/build.py` が自動生成するため重複の心配はないが，index.html・各一覧ページ（`composition/index.html` 等）・`introduction/`・`research/` の5ページは build.py の対象外で，`<header class="page-header">` を今も手作業で複製している．ナビゲーションのリンク先を変えるにはこの5ページの修正が必要（後述の既知の課題を参照）．
 - 改行コードは `.gitattributes` で LF に統一している．エディタ側の自動変換設定によってはCRLFで保存されることがあるため，コミット前に確認すること．
 
 ## 2026-08-22 に実施したリニューアル
@@ -71,6 +84,12 @@
 - **（さらに追記）説明文をHELP以外から削減**：index.html・各一覧ページ・デモ記事の本文にあった「これは○○の仕組みを示すためのものです」といった仕組みの説明を撤去し，仕組みの説明はHELPセクションのみに集約．他の箇所は最小限の見出し・キャプションのみとした．
 - **（さらに追記）パート譜に「次の記事へ」ボタンを追加**：連作の重み（あれば最優先）と，投稿日の近さ・pc1の近さから合成した確率で，重み付きランダムに次の記事へ遷移する．連作を持たない記事でも常に何らかの確率分布になるようフォールバックを用意している（`assets/score.js` の `relationWeight`）．
 
+## 2026-08-23 に実施した作業
+
+- **記事ページの自動生成（`tools/build.py`）を導入**：これまで記事ごとに手でHTMLを書いていたが，`contents/<slug>/source.html`（メタデータ＋本文だけ）から `contents/<slug>/index.html` と `assets/score-data.js` をまとめて生成するPython標準ライブラリのみのスクリプトを追加した．外部依存なし，実行しなくてもサイトの配信自体には影響しない（手元でのみ使う補助スクリプト）．
+- これに伴い，各記事の `id` を（例：`comp-festive-sonata`のような接頭辞付きの手動ID）から，スラッグそのもの（例：`festive-sonata-op1`）に統一した．
+- 既存の実記事5件・デモ記事6件はすべて `source.html` に移行し，生成結果が移行前と一致することを確認済み．
+
 ## 2026-08-21 に実施した整理内容
 
 - トップページ（`index.html`）のナビゲーションで，「略歴」リンクが `../introduction/index.html` となっており，サイト外に出る壊れたリンクになっていたバグを修正（`./introduction/index.html` に修正）．
@@ -83,13 +102,13 @@
 
 ## 既知の課題・次のリニューアル作業で検討すべきこと
 
-- **ヘッダーの重複**：各ページの `<header class="page-header">`（アイコンナビのSVGを含む）は，インクルードの仕組みがないため手作業で複製している．静的サイトジェネレータ（Eleventy, Astro, Hugoなど）の導入か，簡易なビルドスクリプトでのインクルード機構の用意を検討．
-- **`pc1`（記事ベクトルの主成分）が仮値**：`assets/score-data.js` の各記事に人手で -1〜1 の値を割り当てているだけで，本文からベクトルを生成する仕組みはまだ無い．
-- **投稿日の精度**：年のみ判明している記事は `isDateExact: false` として月日を仮に補完している．正確な日付が判明次第，直接書き換える．
-- **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録は実記事が無いため，スコア譜上は `demo/` 以下のデモ記事（`dummy: true`）が代わりに表示されている．
+- **ヘッダーの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`composition/index.html`・`music/index.html`・`introduction/index.html`・`research/index.html` の5ページは対象外で，`<header>` を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
+- **`pc1`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てているだけで，本文からベクトルを生成する仕組みはまだ無い．
+- **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
+- **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録は実記事が無いため，スコア譜上は `contents/` 内のデモ記事（`dummy: true`）が代わりに表示されている．
 - **Identity / Contact / Help の実内容**：index.html内の3セクションは英語見出し＋仮のプレースホルダー文章．Contactは実際の連絡先が未定（ダミーの `mail@example.invalid` を表示）．
 - **作品集の未記入箇所**：`Lyric Pieces Op. 2` の解説文，「その他自作曲」2曲（staff meeting in progress，Five in a Row）の詳細情報が空欄．
-- **連作（series）メタデータ**：現状は `score-data.js` に手動で連作IDを設定しているのみ．実運用でどう管理するか（記事本文中のfront-matter等）は未検討．
+- **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
 - **OGPタグ**：`meta description` は追加済みだが，`og:title`・`og:image` などSNSシェア向けのタグは未設定．
 
 具体的な作業項目は `TODO.md` にチェックリストとしてまとめてある．
