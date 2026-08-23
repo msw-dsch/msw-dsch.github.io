@@ -61,7 +61,7 @@ window.SCORE_DATA = {
       isDateExact: false,
       kind: "作品",
       pc1: -0.05,
-      series: null,
+      series: "anti-composition",
       dummy: false
     },
     {
@@ -73,6 +73,17 @@ window.SCORE_DATA = {
       kind: "楽曲探索",
       pc1: 0.15,
       series: null,
+      dummy: false
+    },
+    {
+      id: "anti-composition",
+      title: "Anti Composition",
+      url: "/contents/anti-composition/",
+      date: "2023-06-01",
+      isDateExact: false,
+      kind: "作品",
+      pc1: -0.2,
+      series: "anti-composition",
       dummy: false
     },
     {

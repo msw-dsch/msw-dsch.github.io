@@ -7,7 +7,7 @@
 - [ ] 略歴（`introduction/`）ページの本文を作成する
 - [ ] 研究記録（`research/`）ページの本文を作成する（建築・災害リスク関連の研究紹介）。実記事ができたら `contents/<slug>/source.html` を新規作成して `python tools/build.py` を実行し，対応するデモ記事（research-note-*）は削除する
 - [ ] 作品集：`Lyric Pieces Op. 2` の解説文を追加する
-- [ ] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報（作曲時期・編成・解説など）を追加する
+- [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）
 - [ ] 楽曲探索：ロースラヴェツ以外の記事を追加するか検討する
 - [ ] Identity / Contact / Help（index.html内）の実際の文面を書く。Contactは実際の連絡先を決める
 

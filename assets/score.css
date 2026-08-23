@@ -160,6 +160,29 @@ section.site-section .cta-link:hover { background: var(--k-red); color: var(--pa
 .citation li { margin-bottom: 6px; }
 .cyrillic { font-family: 'PT Serif', serif; }
 
+/* ---- 資料・外部リンク ---- */
+
+.resources {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin: 28px 0; max-width: 68ch;
+}
+.resource-link {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: 'PT Mono', monospace; font-size: 13px; color: var(--ink);
+  background: var(--panel); border: 1px solid var(--hair);
+  padding: 9px 14px; text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.resource-link:hover { border-color: var(--k-red); background: var(--paper-2); }
+.resource-link:focus-visible { outline: 2px solid var(--k-blue); outline-offset: 2px; }
+.resource-link .resource-type {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--panel); background: var(--k-red); padding: 2px 6px;
+}
+.resource-link .resource-size { color: var(--ink-faint); font-size: 11px; }
+.resource-link .resource-icon { color: var(--ink-faint); flex: none; }
+.resource-link:hover .resource-icon { color: var(--k-red); }
+
 /* ---- デモ記事バナー ---- */
 
 .demo-banner {

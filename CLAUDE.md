@@ -27,12 +27,14 @@
 ├─ music/index.html                  楽曲探索：一覧ページ
 ├─ composition/index.html            作品集：一覧ページ（受賞歴を含む）
 └─ contents/                         記事の実体はすべてここに平置き（カテゴリ別フォルダには分けない）
-    ├─ festive-sonata-op1/           実記事：Festive Sonata Op. 1（末尾にパート譜）
+    ├─ festive-sonata-op1/           実記事：Festive Sonata Op. 1（パート譜＋楽譜PDF）
     │   ├─ source.html               ← 編集するのはこちら（メタデータ＋本文）
-    │   └─ index.html                ← build.pyが生成する実ページ（直接編集しない）
+    │   ├─ index.html                ← build.pyが生成する実ページ（直接編集しない）
+    │   └─ Festive_Sonata.pdf        資料（.resources のダウンロードリンクから参照）
     ├─ lyric-pieces-op2/              実記事：Lyric Pieces Op. 2（解説文は未着手）
-    ├─ staff-meeting-in-progress/    実記事：staff meeting in progress（詳細未着手）
-    ├─ five-in-a-row/                実記事：Five in a Row（詳細未着手）
+    ├─ staff-meeting-in-progress/    実記事：staff meeting in progress（series: anti-composition）
+    ├─ five-in-a-row/                実記事：Five in a Row（楽譜PDF＋対局盤面xlsx2点）
+    ├─ anti-composition/             実記事：Anti Composition（staff meeting in progressと連作）
     ├─ roslavets/                    実記事：ロースラヴェツ
     └─ （研究メモ・エッセイ・日記のデモ記事6件，DEMO CONTENTバナー付き，dummy: true）
 ```
@@ -89,6 +91,10 @@
 - **記事ページの自動生成（`tools/build.py`）を導入**：これまで記事ごとに手でHTMLを書いていたが，`contents/<slug>/source.html`（メタデータ＋本文だけ）から `contents/<slug>/index.html` と `assets/score-data.js` をまとめて生成するPython標準ライブラリのみのスクリプトを追加した．外部依存なし，実行しなくてもサイトの配信自体には影響しない（手元でのみ使う補助スクリプト）．
 - これに伴い，各記事の `id` を（例：`comp-festive-sonata`のような接頭辞付きの手動ID）から，スラッグそのもの（例：`festive-sonata-op1`）に統一した．
 - 既存の実記事5件・デモ記事6件はすべて `source.html` に移行し，生成結果が移行前と一致することを確認済み．
+- **実記事を追加**：`staff meeting in progress`，`Five in a Row` の本文（本人による実際の作品解説）を追加．新規に `Anti Composition (2023)` を追加し，`staff meeting in progress` と `series: anti-composition` で連作として結んだ（実記事どうしの連作関係はこれが初めて）．
+- **資料ダウンロード用のUI部品（`.resources`/`.resource-link`）を `assets/score.css` に追加**：PDF・XLSX・HEICなどの補助資料を，記事本文中に軽いチップ型のダウンロードリンクとして配置できるようにした．`<a>` に `download` 属性を付けており，ファイルは記事と同じ `contents/<slug>/` フォルダに置く運用．ファイル名に空白や日本語を含む場合はURLエンコードして `href` に書く（例：`Five%20in%20a%20Row_2.4.pdf`）．
+- HEIC画像（iPhone標準形式）はブラウザによってはプレビューできないため，`<img>` では埋め込まずダウンロードリンクのみにしている．
+- `.gitattributes` に `*.pdf`／`*.xlsx`／`*.HEIC`／`*.heic` のbinary指定を追加．
 
 ## 2026-08-21 に実施した整理内容
 
@@ -107,7 +113,7 @@
 - **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
 - **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録は実記事が無いため，スコア譜上は `contents/` 内のデモ記事（`dummy: true`）が代わりに表示されている．
 - **Identity / Contact / Help の実内容**：index.html内の3セクションは英語見出し＋仮のプレースホルダー文章．Contactは実際の連絡先が未定（ダミーの `mail@example.invalid` を表示）．
-- **作品集の未記入箇所**：`Lyric Pieces Op. 2` の解説文，「その他自作曲」2曲（staff meeting in progress，Five in a Row）の詳細情報が空欄．
+- **作品集の未記入箇所**：`Lyric Pieces Op. 2` の解説文が空欄．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
 - **OGPタグ**：`meta description` は追加済みだが，`og:title`・`og:image` などSNSシェア向けのタグは未設定．
 
