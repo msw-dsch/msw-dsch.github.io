@@ -22,7 +22,8 @@ contents/<slug>/source.html を読み込み，
 
 必須項目:
     title   記事タイトル
-    kind    種別（例：作品，楽曲探索，研究メモ）
+    kind    種別（例：作品，楽曲探索，研究メモ）。サイト表示には出さない内部用の分類で，
+            source.html を読む人（自分）が識別しやすくするためだけに使う
     date    投稿日（YYYY-MM-DD）
     pc1     記事ベクトルの主成分の仮値（-1〜1）
 
@@ -31,7 +32,8 @@ contents/<slug>/source.html を読み込み，
     series      連作ID。同じseriesを持つ記事どうしが連桁でつながる（既定 なし）
     dummy       true にするとDEMO CONTENTバナー・noindexが自動で付く（既定 false）
     heading     ページ見出し(h1)がtitleと違う場合だけ指定（既定 titleと同じ）
-    eyebrow     見出し上の小さなラベル（既定 "{kind} ｜ {年}"）
+    eyebrow     見出し上の小さなラベル（既定 "{年}"）。「作品」「研究記録」等の
+                カテゴリ名は出さない方針（記事は分類ラベルを名乗らない）
     deck        見出し下の一言（既定：dummyならデモ表記，通常は空）
     description meta descriptionタグの内容（既定：自動生成）
 
@@ -187,7 +189,7 @@ def build_one(slug_dir):
     dummy = truthy(meta.get("dummy"), default=False)
 
     heading = meta.get("heading") or title
-    eyebrow = meta.get("eyebrow") or f"{kind} ｜ {year}"
+    eyebrow = meta.get("eyebrow") or year
     deck = meta.get("deck")
     if deck is None:
         deck = "これはデモ記事です．" if dummy else ""
