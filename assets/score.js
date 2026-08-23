@@ -8,7 +8,7 @@
  *
  * スコア譜（index.html）：4段（S/A/T/B）はそれぞれ記事ベクトルの第1〜4主成分
  * （pc1〜pc4）の音高を表す．つまり1つの記事＝1つの和音として，同じ横位置に
- * 4つの音符が同時に鳴る．薄い縦線で4つの音符を結び，1つの記事であることを示す．
+ * 4つの音符が同時に鳴る．
  * 連桁（符幹をつなぐ太線）は，同一連作（series）の記事どうしに，4段すべてで
  * 並行して引かれる．
  *
@@ -360,16 +360,6 @@
       }
     }
 
-    // score モードでは，1つの記事が4段にまたがる「和音」であることを薄い縦線で示す
-    function drawChordConnector(voicesPos) {
-      ctx.beginPath();
-      ctx.moveTo(voicesPos.S.x, voicesPos.S.y);
-      ctx.lineTo(voicesPos.B.x, voicesPos.B.y);
-      ctx.strokeStyle = "rgba(28,26,23,0.10)";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-
     function drawNotehead(n, p, voiceKey, opts) {
       opts = opts || {};
       var v = VOICES[voiceKey];
@@ -429,7 +419,6 @@
       drawStaves();
       drawTimeAxis();
       if (mode === "score") {
-        activeIds.forEach(function (id) { drawChordConnector(layout.pos[id]); });
         activeIds.forEach(function (id) {
           var n = byId[id], voicesPos = layout.pos[id];
           VOICE_KEYS.forEach(function (vk) { drawNotehead(n, voicesPos[vk], vk, {}); });
