@@ -108,6 +108,20 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
+      id: "shostakovich-symphony-7",
+      title: "なぜ私は「壮大なる愚作」を名乗るのか",
+      url: "/contents/shostakovich-symphony-7/",
+      date: "2024-01-01",
+      isDateExact: false,
+      kind: "エッセイ",
+      pc1: 0.05,
+      pc2: 0.5099,
+      pc3: -0.3773,
+      pc4: 0.2868,
+      series: null,
+      dummy: false
+    },
+    {
       id: "five-in-a-row",
       title: "Five in a Row",
       url: "/contents/five-in-a-row/",

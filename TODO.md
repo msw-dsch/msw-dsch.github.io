@@ -11,7 +11,8 @@
 - [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）
 - [x] 作品集：`Lyric Pieces Op. 2` の解説文を追加，新規に `After Čiurlionis` を追加（2026-08-24）
 - [ ] 楽曲探索：ロースラヴェツ以外の記事を追加するか検討する
-- [ ] Identity / Contact / Help（index.html内）の実際の文面を書く。Contactは実際の連絡先を決める
+- [x] Identity / Contact の実際の文面を書く（Contactは実際のメールアドレスに変更済み）
+- [ ] Abstract（index.html内）の本文を書く（2026-08-24，旧「前文」は `shostakovich-symphony-7` 記事として分離し，Abstractはプレースホルダーのまま）
 
 ## スコア譜（楽譜としてのグラフ）
 
@@ -27,6 +28,7 @@
 - [x] 全体の配色・フォントの方向性を決める（2026-08-22，カンディンスキー《小さな世界》＋バウハウス色彩理論を基調に一新）
 - [x] レスポンシブ対応（スマホ幅でのヘッダー崩れを解消する）
 - [x] 音部記号を実際のグリフに（Noto Music）
+- [x] Abstract/Identity/Contact/Helpをアコーディオン化（既定は非表示，アイコンクリックで展開）／スコア譜パネルをスクロールでフェードイン表示（2026-08-24）
 - [ ] サイトアイコン（`icon.JPG`）を差し替えるか検討する
 
 ## 技術

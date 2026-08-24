@@ -14,13 +14,49 @@
  *
  * パート譜（記事ページ）：声部（S/A/T/B）はpc1の四分位から決まる固定属性で，
  * 1段の譜表にpc1のみを連続的な音高として表示する（4声部化はしない）．
+ *
+ * index.htmlのAbstract/Identity/Contact/Helpはアコーディオン式（既定で折りたたみ，
+ * 対応するアイコンのクリックで1つだけ展開）．スコア譜パネルはスクロールで
+ * 画面内に入った時にフェードインする（initScrollReveal）．
  */
 (function () {
   "use strict";
 
+  // Abstract/Identity/Contact/Help はアコーディオン式：既定で折りたたまれており，
+  // 対応するアイコンのクリックで1つだけ展開する（他は自動的に閉じる）．
+  function toggleSiteSection(id) {
+    var el = document.getElementById(id);
+    if (!el || !el.classList.contains("site-section")) return false;
+    var willOpen = !el.classList.contains("is-open");
+    document.querySelectorAll("section.site-section.is-open").forEach(function (s) {
+      s.classList.remove("is-open");
+    });
+    if (willOpen) {
+      el.classList.add("is-open");
+      requestAnimationFrame(function () {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+    return true;
+  }
+
+  function initAccordion() {
+    if (!document.querySelector("section.site-section")) return;
+    var hash = location.hash.replace("#", "");
+    if (hash) {
+      var el = document.getElementById(hash);
+      if (el && el.classList.contains("site-section")) {
+        el.classList.add("is-open");
+        setTimeout(function () { el.scrollIntoView({ behavior: "auto", block: "start" }); }, 60);
+      }
+    }
+  }
+
   function jump(target) {
     if (!target) return;
     if (target.charAt(0) === "#") {
+      var id = target.slice(1);
+      if (toggleSiteSection(id)) return;
       var el = document.querySelector(target);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
@@ -41,6 +77,21 @@
         if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); jump(el.dataset.target); }
       });
     });
+  }
+
+  function initScrollReveal() {
+    var frame = document.querySelector(".score-frame");
+    if (!frame) return;
+    if (!("IntersectionObserver" in window)) { frame.classList.add("is-visible"); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          frame.classList.add("is-visible");
+          io.unobserve(frame);
+        }
+      });
+    }, { threshold: 0.15 });
+    io.observe(frame);
   }
 
   function initScore() {
@@ -485,6 +536,8 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initHotspots();
+    initAccordion();
     initScore();
+    initScrollReveal();
   });
 })();

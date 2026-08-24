@@ -14,7 +14,7 @@
 
 ```
 /
-├─ index.html                        トップページ．全面のアイコンナビ＋前文＋スコア譜（総譜）＋Identity/Contact/Help
+├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）＋Abstract/Identity/Contact/Help（既定は折りたたみ，アイコンクリックで展開）
 ├─ icon.JPG                          サイトアイコン画像（ファビコンとして使用）
 ├─ tools/
 │   └─ build.py                      記事ページ生成スクリプト（後述）
@@ -31,6 +31,7 @@
     │   └─ Festive_Sonata.pdf        資料（.resources のダウンロードリンクから参照）
     ├─ lyric-pieces-op2/              実記事：Lyric Pieces Op. 2（全5曲，各曲のデモ音源リンク付き）
     ├─ after-ciurlionis/             実記事：After Čiurlionis（チュルリョーニス絵画2点＋楽譜PDF2点）
+    ├─ shostakovich-symphony-7/      実記事：なぜ私は「壮大なる愚作」を名乗るのか（旧index.html「前文」，kind: エッセイ）
     ├─ staff-meeting-in-progress/    実記事：staff meeting in progress（series: anti-composition）
     ├─ five-in-a-row/                実記事：Five in a Row（楽譜PDF＋対局盤面xlsx2点）
     ├─ anti-composition/             実記事：Anti Composition（staff meeting in progressと連作，スコア譜PDF＋演奏後パート譜写真を画像埋め込み）
@@ -117,6 +118,11 @@
 - **研究記録の実記事を2件追加（ベイジアンネットワーク研究）**：`bn_discretization`（限界状態面情報を用いた変数離散化，査読付論文），`bn_sampling`（リスク適応型サンプリング・離散化，UQ Summer Schoolポスター）．`series: bn_research` で連作として結んだ．`bn_sampling` はポスターPDFを画像化して埋め込み，PDF自体もダウンロード資料として提供．`bn_discretization` は投稿時点でタイトルが `bn_sampling` と同一のコピペミスになっていたため修正．
 - **（追記）作品集を3件更新**：`Lyric Pieces Op. 2` に全5曲の解説文と各曲のデモ音源リンクを追加（それまで空欄だった）．新規に `After Čiurlionis: the diptych "Prelude. Fugue" Čt 88, 89` を追加し，チュルリョーニスの原画2点（`prelude.webp`／`fugue.webp`）を `.gallery` で引用表示，自作の楽譜PDF2点（Prelude／Fugue）をダウンロード資料として添付．`Festive Sonata Op. 1` の音源リンクも他記事と表記を揃えた（`target="_blank"` と矢印付きに統一）．
 - **`street-blockage-robot-2` の分割元PDF（`Presentation_no1〜12.pdf`，計約57MB）を削除**：`poster_full.pdf` に合成済みで記事から参照されていなかったため，ユーザーの許可を得て削除．
+- **（追記）「前文」を個別記事に分離し，Abstractセクションはプレースホルダーに**：index.htmlの「前文：なぜ私は『壮大なる愚作』を名乗るのか」（ショスタコーヴィチ交響曲第7番についての文章）を，新規記事 `contents/shostakovich-symphony-7/`（kind: エッセイ）として独立させた．index.htmlのAbstractセクションは他の未着手ページ（introduction/research）と同じ「本文は未着手です．」のプレースホルダーに変更．
+- **（追記）Abstract/Identity/Contact/Helpをアコーディオン化**：既定では折りたたまれて非表示，ヘッダーの対応する図形をクリックすると1つだけ展開する（他は自動的に閉じる）．`assets/score.css` の `section.site-section`／`.is-open` と，`assets/score.js` の `toggleSiteSection`／`initAccordion` で実装．他ページ（記事ページのコンパクトヘッダー，`introduction/`・`research/`）から `/index.html#help` 等へのリンクは，読み込み時にハッシュを見て対応するセクションを自動展開する．旧 `section.intro`（Abstract専用クラス）は廃止し，4セクションとも `section.site-section` に統一．
+- **（追記）スコア譜パネルをスクロールでフェードイン表示**：`.score-frame` に `IntersectionObserver` を設定し（`initScrollReveal`），画面内に入った時に一度だけフェードイン＋わずかに上昇するアニメーションを行う．index.htmlの総譜・各記事ページのパート譜の両方に共通で適用される．
+- コンパクトヘッダー（`tools/build.py` の `HEADER_NAV`，および build.py対象外の `introduction/`・`research/`）のラベルから「（前文）」「（略歴）」「（読み方）」の日本語補足を削除し，index.htmlの図形ラベルと表記を統一．IDENTITYアイコンの遷移先も `/introduction/` 直行から `/index.html#identity`（Identityパネルを開く）に統一した．
+- index.htmlのスクロール誘導文言を「前文へ」から「SCROLL」に変更（Abstractが既定で隠れるようになったため）．
 
 ## 2026-08-21 に実施した整理内容
 
@@ -134,7 +140,7 @@
 - **`pc1`〜`pc4`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てている（`pc2`〜`pc4`は省略時に自動生成される仮値）だけで，本文からベクトルを生成する仕組みはまだ無い．
 - **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
 - **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
-- **Identity / Contact / Help の実内容**：index.html内の3セクションは英語見出し＋仮のプレースホルダー文章．Contactは実際の連絡先が未定（ダミーの `mail@example.invalid` を表示）．
+- **Abstract の本文が未着手**：index.html内のAbstractセクションは「本文は未着手です．」のプレースホルダーのまま．Identity/Contact/Helpは文面が入っている（Contactは実際のメールアドレスを表示）．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
 - **OGPタグ**：`meta description` は追加済みだが，`og:title`・`og:image` などSNSシェア向けのタグは未設定．
 
