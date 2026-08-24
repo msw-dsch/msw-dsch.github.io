@@ -29,10 +29,11 @@
     │   ├─ source.html               ← 編集するのはこちら（メタデータ＋本文）
     │   ├─ index.html                ← build.pyが生成する実ページ（直接編集しない）
     │   └─ Festive_Sonata.pdf        資料（.resources のダウンロードリンクから参照）
-    ├─ lyric-pieces-op2/              実記事：Lyric Pieces Op. 2（解説文は未着手）
+    ├─ lyric-pieces-op2/              実記事：Lyric Pieces Op. 2（全5曲，各曲のデモ音源リンク付き）
+    ├─ after-ciurlionis/             実記事：After Čiurlionis（チュルリョーニス絵画2点＋楽譜PDF2点）
     ├─ staff-meeting-in-progress/    実記事：staff meeting in progress（series: anti-composition）
     ├─ five-in-a-row/                実記事：Five in a Row（楽譜PDF＋対局盤面xlsx2点）
-    ├─ anti-composition/             実記事：Anti Composition（staff meeting in progressと連作）
+    ├─ anti-composition/             実記事：Anti Composition（staff meeting in progressと連作，スコア譜PDF＋演奏後パート譜写真を画像埋め込み）
     ├─ roslavets/                    実記事：ロースラヴェツ
     ├─ street-blockage-robot-1/      実記事：狭隘道路の道路閉塞評価モデル（卒業論文，series: street-blockage-robot）
     ├─ street-blockage-robot-2/      実記事：狭隘道路の試行的提案（卒業制作，模型写真＋ポスターPDF）
@@ -114,6 +115,8 @@
 - **（追記）`anti-composition` のHEIC画像をJPEGに変換して埋め込み**：`pillow-heif` で `part-decomposed.HEIC` → `part-decomposed.jpg` に変換（EXIF Orientationは1で回転補正不要，そのまま変換）．元のHEICは資料ダウンロードとして引き続き残している．
 - **（追記）`anti-composition` のスコア譜PDFを画像化して埋め込み**：`score.pdf`（2ページ）を `pymupdf` で `score_p1.jpg`／`score_p2.jpg` にレンダリングし，`.gallery` で並べて表示．PDF自体も引き続きダウンロード資料として残している．
 - **研究記録の実記事を2件追加（ベイジアンネットワーク研究）**：`bn_discretization`（限界状態面情報を用いた変数離散化，査読付論文），`bn_sampling`（リスク適応型サンプリング・離散化，UQ Summer Schoolポスター）．`series: bn_research` で連作として結んだ．`bn_sampling` はポスターPDFを画像化して埋め込み，PDF自体もダウンロード資料として提供．`bn_discretization` は投稿時点でタイトルが `bn_sampling` と同一のコピペミスになっていたため修正．
+- **（追記）作品集を3件更新**：`Lyric Pieces Op. 2` に全5曲の解説文と各曲のデモ音源リンクを追加（それまで空欄だった）．新規に `After Čiurlionis: the diptych "Prelude. Fugue" Čt 88, 89` を追加し，チュルリョーニスの原画2点（`prelude.webp`／`fugue.webp`）を `.gallery` で引用表示，自作の楽譜PDF2点（Prelude／Fugue）をダウンロード資料として添付．`Festive Sonata Op. 1` の音源リンクも他記事と表記を揃えた（`target="_blank"` と矢印付きに統一）．
+- **`street-blockage-robot-2` の分割元PDF（`Presentation_no1〜12.pdf`，計約57MB）を削除**：`poster_full.pdf` に合成済みで記事から参照されていなかったため，ユーザーの許可を得て削除．
 
 ## 2026-08-21 に実施した整理内容
 
@@ -132,7 +135,6 @@
 - **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
 - **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
 - **Identity / Contact / Help の実内容**：index.html内の3セクションは英語見出し＋仮のプレースホルダー文章．Contactは実際の連絡先が未定（ダミーの `mail@example.invalid` を表示）．
-- **作品集の未記入箇所**：`Lyric Pieces Op. 2` の解説文が空欄．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
 - **OGPタグ**：`meta description` は追加済みだが，`og:title`・`og:image` などSNSシェア向けのタグは未設定．
 

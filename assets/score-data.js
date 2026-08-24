@@ -178,6 +178,20 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
+      id: "after-ciurlionis",
+      title: "After Čiurlionis: the diptych “Prelude. Fugue” Čt 88, 89",
+      url: "/contents/after-ciurlionis/",
+      date: "2026-04-10",
+      isDateExact: true,
+      kind: "作品",
+      pc1: 0.6,
+      pc2: -0.2503,
+      pc3: 0.7736,
+      pc4: 0.2715,
+      series: null,
+      dummy: false
+    },
+    {
       id: "bn_discretization",
       title: "構造物のシステム信頼性評価のための限界状態面情報を用いたベイジアンネットワーク変数離散化",
       url: "/contents/bn_discretization/",
