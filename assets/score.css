@@ -124,28 +124,57 @@ section.after h2, section.article-body h2 { font-family: 'Jost', sans-serif; fon
 section.after ul { margin: 0 0 16px; padding-left: 20px; color: var(--ink-soft); }
 section.after li { margin-bottom: 8px; }
 
-/* index.htmlのアコーディオン式セクション（Abstract / Identity / Contact / Help）
-   既定では折りたたまれており，対応するアイコンのクリックで展開する（assets/score.js の initAccordion） */
-section.site-section {
-  max-width: 68ch; scroll-margin-top: 24px;
-  overflow: hidden; max-height: 0; opacity: 0; padding: 0 0 44px;
-  border-top: 0 dashed var(--hair);
-  transition: max-height 0.5s ease, opacity 0.4s ease, padding-top 0.5s ease, border-top-width 0.3s ease;
+/* モーダル（Abstract / Identity / Contact / Help）
+   全ページ共通．対応するアイコンのクリックで，現在のページの上に浮かび上がる形で表示する
+   （assets/score.js の openModal／closeModal）．内容の実体は index.html の <template> にのみ存在し，
+   他ページではそれを fetch して読み込む． */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 60;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: rgba(28, 26, 23, 0);
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s ease, background 0.3s ease, visibility 0s linear 0.3s;
 }
-section.site-section.is-open {
-  max-height: 2400px; opacity: 1; padding-top: 44px; border-top-width: 1px;
+.modal-overlay[hidden] { display: none; }
+.modal-overlay.is-open {
+  opacity: 1; visibility: visible;
+  background: rgba(28, 26, 23, 0.45);
+  transition: opacity 0.3s ease, background 0.3s ease;
 }
-section.site-section .eyebrow { margin-bottom: 14px; }
-section.site-section h2 {
+.modal-panel {
+  position: relative; width: 100%; max-width: 640px; max-height: 84vh; overflow-y: auto;
+  background: var(--panel); border: 1.5px solid var(--ink);
+  padding: 48px 40px 40px;
+  transform: translateY(36px) scale(0.98); opacity: 0;
+  transition: transform 0.36s cubic-bezier(0.2, 0.7, 0.3, 1), opacity 0.3s ease;
+}
+.modal-overlay.is-open .modal-panel { transform: translateY(0) scale(1); opacity: 1; }
+.modal-panel::before, .modal-panel::after {
+  content: ""; position: absolute; width: 16px; height: 16px; pointer-events: none;
+}
+.modal-panel::before { top: -1.5px; left: -1.5px; border-top: 2.5px solid var(--k-red); border-left: 2.5px solid var(--k-red); }
+.modal-panel::after  { bottom: -1.5px; right: -1.5px; border-bottom: 2.5px solid var(--k-red); border-right: 2.5px solid var(--k-red); }
+.modal-close {
+  position: absolute; top: 12px; right: 12px; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--hair); color: var(--ink);
+  font-family: 'PT Mono', monospace; font-size: 16px; line-height: 1; cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.modal-close:hover, .modal-close:focus-visible { border-color: var(--k-red); color: var(--k-red); }
+body.modal-lock { overflow: hidden; }
+
+.modal-body .eyebrow { margin-bottom: 14px; }
+.modal-body h2 {
   font-family: 'Jost', sans-serif; font-weight: 600; font-size: 26px; margin: 0 0 16px; text-transform: uppercase; letter-spacing: 0.02em;
 }
-section.site-section p { margin: 0 0 14px; color: var(--ink-soft); max-width: 60ch; }
-section.site-section .fake-link { color: var(--k-red); border-bottom: 1px solid currentColor; }
-section.site-section .cta-link {
+.modal-body p { margin: 0 0 14px; color: var(--ink-soft); max-width: 60ch; }
+.modal-body .fake-link { color: var(--k-red); border-bottom: 1px solid currentColor; }
+.modal-body .cta-link {
   display: inline-block; margin-top: 6px; font-family: 'PT Mono', monospace; font-size: 13px;
   color: var(--k-red); border: 1px solid var(--k-red); padding: 8px 16px;
 }
-section.site-section .cta-link:hover { background: var(--k-red); color: var(--panel); }
+.modal-body .cta-link:hover { background: var(--k-red); color: var(--panel); }
 
 /* ---- 作品カード（旧sticker相当） ---- */
 
@@ -217,12 +246,14 @@ figcaption {
 
 /* ---- スコア譜／パート譜パネル ---- */
 
+/* --reveal は 0〜1 の連続値．assets/score.js の initScrollReveal がスクロール位置に応じて
+   継続的に更新し，画面が滑らかに切り替わるように見せる（一度だけのフェードインではない） */
 .score-frame {
+  --reveal: 0;
   position: relative; margin-top: 32px; background: var(--panel); border: 1.5px solid var(--ink); scroll-margin-top: 24px;
-  opacity: 0; transform: translateY(28px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  opacity: var(--reveal);
+  transform: translateY(calc((1 - var(--reveal)) * 64px)) scale(calc(0.97 + var(--reveal) * 0.03));
 }
-.score-frame.is-visible { opacity: 1; transform: translateY(0); }
 .score-frame::before, .score-frame::after, .score-frame .corner-br, .score-frame .corner-bl {
   content: ""; position: absolute; width: 16px; height: 16px; pointer-events: none; z-index: 2;
 }

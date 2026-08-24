@@ -14,7 +14,7 @@
 
 ```
 /
-├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）＋Abstract/Identity/Contact/Help（既定は折りたたみ，アイコンクリックで展開）
+├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）．Abstract/Identity/Contact/Helpは常設せず，アイコンクリックでモーダルウィンドウとして表示（内容は<template>で保持）
 ├─ icon.JPG                          サイトアイコン画像（ファビコンとして使用）
 ├─ tools/
 │   └─ build.py                      記事ページ生成スクリプト（後述）
@@ -119,8 +119,8 @@
 - **（追記）作品集を3件更新**：`Lyric Pieces Op. 2` に全5曲の解説文と各曲のデモ音源リンクを追加（それまで空欄だった）．新規に `After Čiurlionis: the diptych "Prelude. Fugue" Čt 88, 89` を追加し，チュルリョーニスの原画2点（`prelude.webp`／`fugue.webp`）を `.gallery` で引用表示，自作の楽譜PDF2点（Prelude／Fugue）をダウンロード資料として添付．`Festive Sonata Op. 1` の音源リンクも他記事と表記を揃えた（`target="_blank"` と矢印付きに統一）．
 - **`street-blockage-robot-2` の分割元PDF（`Presentation_no1〜12.pdf`，計約57MB）を削除**：`poster_full.pdf` に合成済みで記事から参照されていなかったため，ユーザーの許可を得て削除．
 - **（追記）「前文」を個別記事に分離し，Abstractセクションはプレースホルダーに**：index.htmlの「前文：なぜ私は『壮大なる愚作』を名乗るのか」（ショスタコーヴィチ交響曲第7番についての文章）を，新規記事 `contents/shostakovich-symphony-7/`（kind: エッセイ）として独立させた．index.htmlのAbstractセクションは他の未着手ページ（introduction/research）と同じ「本文は未着手です．」のプレースホルダーに変更．
-- **（追記）Abstract/Identity/Contact/Helpをアコーディオン化**：既定では折りたたまれて非表示，ヘッダーの対応する図形をクリックすると1つだけ展開する（他は自動的に閉じる）．`assets/score.css` の `section.site-section`／`.is-open` と，`assets/score.js` の `toggleSiteSection`／`initAccordion` で実装．他ページ（記事ページのコンパクトヘッダー，`introduction/`・`research/`）から `/index.html#help` 等へのリンクは，読み込み時にハッシュを見て対応するセクションを自動展開する．旧 `section.intro`（Abstract専用クラス）は廃止し，4セクションとも `section.site-section` に統一．
-- **（追記）スコア譜パネルをスクロールでフェードイン表示**：`.score-frame` に `IntersectionObserver` を設定し（`initScrollReveal`），画面内に入った時に一度だけフェードイン＋わずかに上昇するアニメーションを行う．index.htmlの総譜・各記事ページのパート譜の両方に共通で適用される．
+- **（追記，のちにモーダル方式に変更）Abstract/Identity/Contact/Helpをモーダルウィンドウ表示に**：最初はページ内アコーディオン（`section.site-section`／`.is-open`）として実装したが，「図形をクリックしたら別ウィンドウが浮かび上がってくる」という要望を受けてモーダル方式に変更．常設ページ本文としては存在せず，`index.html` の `<template id="tpl-abstract">` 等4つの `<template>` にのみ内容が存在する．クリックされると，そのページ自身の上に `#modalOverlay`／`.modal-panel` としてオーバーレイ表示される（`assets/score.js` の `openModal`／`closeModal`）．**index.html以外のページ**（記事ページのコンパクトヘッダー，`introduction/`・`research/`）でクリックされた場合は，そのページに居続けたまま `fetch("/index.html")` して該当 `<template>` の内容を取り出し，同じモーダルに流し込む（`getModalContent`，1回fetchしたら使い回す）．背景クリック・Escapeキー・×ボタンで閉じる．
+- **（追記，のちにスクロール連動方式に変更）スコア譜パネルをスクロールに連動して滑らかに表示**：最初は`IntersectionObserver`による一度きりのフェードインだったが，「スクロールで画面が滑らかに切り替わるような実装」という要望を受け，スクロール位置に連動して連続的に変化する方式に変更．`.score-frame` の `--reveal`（0〜1のCSSカスタムプロパティ）を，`scroll`イベント＋`requestAnimationFrame`で毎フレーム再計算し（`initScrollReveal`），`opacity`／`transform: translateY/scale` に反映する．上下どちらにスクロールしても連続的に追従する（一度出たら固定，ではない）．index.htmlの総譜・各記事ページのパート譜の両方に共通で適用される．
 - コンパクトヘッダー（`tools/build.py` の `HEADER_NAV`，および build.py対象外の `introduction/`・`research/`）のラベルから「（前文）」「（略歴）」「（読み方）」の日本語補足を削除し，index.htmlの図形ラベルと表記を統一．IDENTITYアイコンの遷移先も `/introduction/` 直行から `/index.html#identity`（Identityパネルを開く）に統一した．
 - index.htmlのスクロール誘導文言を「前文へ」から「SCROLL」に変更（Abstractが既定で隠れるようになったため）．
 
@@ -136,7 +136,7 @@
 
 ## 既知の課題・次のリニューアル作業で検討すべきこと
 
-- **ヘッダーの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`introduction/index.html`・`research/index.html` の3ページは対象外で，`<header>` を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
+- **ヘッダー／モーダルの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`introduction/index.html`・`research/index.html` の3ページは対象外で，`<header>` の内容と `.modal-overlay` の枠組み（中身は空で `index.html` からfetchする）を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
 - **`pc1`〜`pc4`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てている（`pc2`〜`pc4`は省略時に自動生成される仮値）だけで，本文からベクトルを生成する仕組みはまだ無い．
 - **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
 - **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．

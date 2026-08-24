@@ -15,51 +15,96 @@
  * パート譜（記事ページ）：声部（S/A/T/B）はpc1の四分位から決まる固定属性で，
  * 1段の譜表にpc1のみを連続的な音高として表示する（4声部化はしない）．
  *
- * index.htmlのAbstract/Identity/Contact/Helpはアコーディオン式（既定で折りたたみ，
- * 対応するアイコンのクリックで1つだけ展開）．スコア譜パネルはスクロールで
- * 画面内に入った時にフェードインする（initScrollReveal）．
+ * Abstract/Identity/Contact/Helpは全ページ共通でモーダル表示．常設のページ本文としては
+ * 出現せず，対応するアイコンのクリックで現在のページの上にウィンドウとして浮かび上がる
+ * （openModal／closeModal）．内容の実体は index.html の <template id="tpl-XXX"> にのみ存在し，
+ * index.html以外のページではそれをfetchして読み込む（getModalContent）．
+ * スコア譜パネルはスクロール量に連動して滑らかにフェードイン／スライドインする
+ * （initScrollReveal，IntersectionObserverではなくscroll+rAFで連続的に計算）．
  */
 (function () {
   "use strict";
 
-  // Abstract/Identity/Contact/Help はアコーディオン式：既定で折りたたまれており，
-  // 対応するアイコンのクリックで1つだけ展開する（他は自動的に閉じる）．
-  function toggleSiteSection(id) {
-    var el = document.getElementById(id);
-    if (!el || !el.classList.contains("site-section")) return false;
-    var willOpen = !el.classList.contains("is-open");
-    document.querySelectorAll("section.site-section.is-open").forEach(function (s) {
-      s.classList.remove("is-open");
-    });
-    if (willOpen) {
-      el.classList.add("is-open");
-      requestAnimationFrame(function () {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+  var MODAL_IDS = ["abstract", "identity", "contact", "help"];
+  var modalContentCache = null; // Promise<{id: htmlString}>；index.html以外のページでfetch結果を使い回す
+  var modalLastFocus = null;
+
+  function getModalContent(id) {
+    var localTpl = document.getElementById("tpl-" + id);
+    if (localTpl) return Promise.resolve(localTpl.innerHTML);
+    if (!modalContentCache) {
+      modalContentCache = fetch("/index.html")
+        .then(function (res) { return res.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, "text/html");
+          var map = {};
+          MODAL_IDS.forEach(function (mid) {
+            var t = doc.getElementById("tpl-" + mid);
+            if (t) map[mid] = t.innerHTML;
+          });
+          return map;
+        });
     }
+    return modalContentCache.then(function (map) { return map[id] || ""; });
+  }
+
+  function openModal(id, triggerEl) {
+    var overlay = document.getElementById("modalOverlay");
+    var body = document.getElementById("modalBody");
+    if (!overlay || !body) return false;
+    modalLastFocus = triggerEl || document.activeElement;
+    getModalContent(id).then(function (html) {
+      body.innerHTML = html;
+      overlay.hidden = false;
+      // hidden解除とクラス付与を同一フレームで行うとトランジションが発火しないため，
+      // 1ティック遅らせて確実にCSSトランジションを効かせる
+      setTimeout(function () {
+        overlay.classList.add("is-open");
+        var closeBtn = document.getElementById("modalClose");
+        if (closeBtn) closeBtn.focus();
+      }, 16);
+      document.body.classList.add("modal-lock");
+    });
     return true;
   }
 
-  function initAccordion() {
-    if (!document.querySelector("section.site-section")) return;
-    var hash = location.hash.replace("#", "");
-    if (hash) {
-      var el = document.getElementById(hash);
-      if (el && el.classList.contains("site-section")) {
-        el.classList.add("is-open");
-        setTimeout(function () { el.scrollIntoView({ behavior: "auto", block: "start" }); }, 60);
-      }
-    }
+  function closeModal() {
+    var overlay = document.getElementById("modalOverlay");
+    if (!overlay || overlay.hidden) return;
+    overlay.classList.remove("is-open");
+    document.body.classList.remove("modal-lock");
+    setTimeout(function () { overlay.hidden = true; }, 300);
+    if (modalLastFocus && typeof modalLastFocus.focus === "function") modalLastFocus.focus();
   }
 
-  function jump(target) {
+  function initModal() {
+    var overlay = document.getElementById("modalOverlay");
+    if (!overlay) return;
+    var closeBtn = document.getElementById("modalClose");
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", function (ev) {
+      if (ev.target === overlay) closeModal();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape" && overlay.classList.contains("is-open")) closeModal();
+    });
+    var hash = location.hash.replace("#", "");
+    if (MODAL_IDS.indexOf(hash) !== -1) openModal(hash);
+  }
+
+  function jump(target, triggerEl) {
     if (!target) return;
     if (target.charAt(0) === "#") {
       var id = target.slice(1);
-      if (toggleSiteSection(id)) return;
+      if (MODAL_IDS.indexOf(id) !== -1) { openModal(id, triggerEl); return; }
       var el = document.querySelector(target);
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
+      var hashPos = target.indexOf("#");
+      if (hashPos !== -1) {
+        var mid = target.slice(hashPos + 1);
+        if (MODAL_IDS.indexOf(mid) !== -1) { openModal(mid, triggerEl); return; }
+      }
       location.href = target;
     }
   }
@@ -72,26 +117,35 @@
       el.addEventListener("focus", function () { if (caption) caption.innerHTML = "→ <b>" + el.dataset.label + "</b>"; });
       el.addEventListener("mouseleave", function () { if (caption) caption.textContent = defaultCaption; });
       el.addEventListener("blur", function () { if (caption) caption.textContent = defaultCaption; });
-      el.addEventListener("click", function () { jump(el.dataset.target); });
+      el.addEventListener("click", function () { jump(el.dataset.target, el); });
       el.addEventListener("keydown", function (ev) {
-        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); jump(el.dataset.target); }
+        if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); jump(el.dataset.target, el); }
       });
     });
   }
 
   function initScrollReveal() {
-    var frame = document.querySelector(".score-frame");
-    if (!frame) return;
-    if (!("IntersectionObserver" in window)) { frame.classList.add("is-visible"); return; }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          frame.classList.add("is-visible");
-          io.unobserve(frame);
-        }
+    var frames = document.querySelectorAll(".score-frame");
+    if (!frames.length) return;
+    var ticking = false;
+    function update() {
+      frames.forEach(function (frame) {
+        var r = frame.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var start = vh * 0.92;
+        var end = vh * 0.55;
+        var t = (start - r.top) / (start - end);
+        t = t < 0 ? 0 : t > 1 ? 1 : t;
+        frame.style.setProperty("--reveal", t.toFixed(3));
       });
-    }, { threshold: 0.15 });
-    io.observe(frame);
+      ticking = false;
+    }
+    function onScroll() {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
   }
 
   function initScore() {
@@ -536,7 +590,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     initHotspots();
-    initAccordion();
+    initModal();
     initScore();
     initScrollReveal();
   });

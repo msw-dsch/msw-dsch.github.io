@@ -58,45 +58,52 @@
 
     <div class="page">
 
-        <section class="site-section" id="abstract">
-            <p class="eyebrow">ABSTRACT</p>
-            <h2>Abstract</h2>
-            <p class="note">本文は未着手です．</p>
-        </section>
-
         <div class="score-frame" id="score-frame">
             <span class="corner-bl"></span><span class="corner-br"></span>
             <div id="score-canvas-mount"></div>
         </div>
-
-        <section class="site-section" id="identity">
-            <p class="eyebrow">IDENTITY</p>
-            <h2>Identity</h2>
-            <p>建築学を専攻し，主に災害リスクに関する研究を行っている．並行して，ロシア・アヴァンギャルド周辺のクラシック音楽の紹介と，自作曲の作曲を続けている．</p>
-            <a class="cta-link" href="./introduction/index.html">略歴ページを見る →</a>
-        </section>
-
-        <section class="site-section" id="contact">
-            <p class="eyebrow">CONTACT</p>
-            <h2>Contact</h2>
-            <p><span class="fake-link">msw.dsch@gmail.com</span></p>
-        </section>
-
-        <section class="site-section" id="help">
-            <p class="eyebrow">HELP</p>
-            <h2>Help</h2>
-            <p>このサイトの各記事は，上のスコア譜に「和音」として並びます．五線はソプラノ・アルト・テノール・バスの4段で，それぞれ記事ベクトルの第1〜第4主成分（現状は仮値）をそのまま音高として表示します．1つの記事が同時に4つの音として鳴ります．</p>
-            <p>横位置は投稿日（左が古く，右が新しい）．投稿が密な時期は音符が密集し，間が空いた時期は自然に離散します．音符の形（三角形・円・ひし形）と色は段ごとに固定の意匠で，カンディンスキーの色彩理論（三角形＝黄，円＝青，四角＝赤）から借りています．</p>
-            <p>符幹をつなぐ太い線（連桁）は，同一連作（続き物）の記事どうしに，4段すべてで並行して引かれます．音符をクリックすると，その記事のページへ移動します．記事のページでは，その記事を中心とした近傍を，第1主成分だけを使った1段の「パート譜」で表示します．</p>
-            <p>破線の輪郭で描かれる音符は，実際の記事ではなく，仕組みを示すためのデモ記事です．</p>
-            <p>冒頭の図形（円・三角形・格子・点・線）はそれぞれ Abstract／Identity／Contents／Contact／Help に対応します．クリックすると該当箇所が展開します．</p>
-        </section>
 
     </div>
 
     <footer class="site-footer">
         <p>© 2024 壮大なる愚作 MSW-DSCH</p>
     </footer>
+
+    <!-- Abstract/Identity/Contact/Help の本文．常設ページには表示されず，
+         対応するアイコンのクリックでモーダルに複製されて表示される．
+         他ページはこのページを fetch してここから内容を読み取る（assets/score.js）． -->
+    <template id="tpl-abstract">
+        <p class="eyebrow">ABSTRACT</p>
+        <h2>Abstract</h2>
+        <p class="note">本文は未着手です．</p>
+    </template>
+    <template id="tpl-identity">
+        <p class="eyebrow">IDENTITY</p>
+        <h2>Identity</h2>
+        <p>建築学を専攻し，主に災害リスクに関する研究を行っている．並行して，ロシア・アヴァンギャルド周辺のクラシック音楽の紹介と，自作曲の作曲を続けている．</p>
+        <a class="cta-link" href="./introduction/index.html">略歴ページを見る →</a>
+    </template>
+    <template id="tpl-contact">
+        <p class="eyebrow">CONTACT</p>
+        <h2>Contact</h2>
+        <p><span class="fake-link">msw.dsch@gmail.com</span></p>
+    </template>
+    <template id="tpl-help">
+        <p class="eyebrow">HELP</p>
+        <h2>Help</h2>
+        <p>このサイトの各記事は，上のスコア譜に「和音」として並びます．五線はソプラノ・アルト・テノール・バスの4段で，それぞれ記事ベクトルの第1〜第4主成分（現状は仮値）をそのまま音高として表示します．1つの記事が同時に4つの音として鳴ります．</p>
+        <p>横位置は投稿日（左が古く，右が新しい）．投稿が密な時期は音符が密集し，間が空いた時期は自然に離散します．音符の形（三角形・円・ひし形）と色は段ごとに固定の意匠で，カンディンスキーの色彩理論（三角形＝黄，円＝青，四角＝赤）から借りています．</p>
+        <p>符幹をつなぐ太い線（連桁）は，同一連作（続き物）の記事どうしに，4段すべてで並行して引かれます．音符をクリックすると，その記事のページへ移動します．記事のページでは，その記事を中心とした近傍を，第1主成分だけを使った1段の「パート譜」で表示します．</p>
+        <p>破線の輪郭で描かれる音符は，実際の記事ではなく，仕組みを示すためのデモ記事です．</p>
+        <p>冒頭の図形（円・三角形・格子・点・線）はそれぞれ Abstract／Identity／Contents／Contact／Help に対応します．クリックするとその内容がウィンドウとして浮かび上がります．</p>
+    </template>
+
+    <div class="modal-overlay" id="modalOverlay" hidden>
+        <div class="modal-panel" role="dialog" aria-modal="true">
+            <button class="modal-close" type="button" id="modalClose" aria-label="閉じる">×</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
 
     <script src="assets/score-data.js"></script>
     <script src="assets/score.js"></script>
