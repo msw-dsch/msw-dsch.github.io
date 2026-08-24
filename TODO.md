@@ -5,7 +5,8 @@
 ## コンテンツ
 
 - [ ] 略歴（`introduction/`）ページの本文を作成する
-- [x] 研究記録の実記事を追加する（2026-08-24，`street-blockage-robot-1〜3`．狭隘道路の道路閉塞評価モデル〜卒業制作〜五月祭展示の一連の卒業研究．対応するデモ記事 research-note-* は削除済み）
+- [x] 研究記録の実記事を追加する（2026-08-24，`street-blockage-robot-1〜3`：狭隘道路の道路閉塞評価モデル〜卒業制作〜五月祭展示の一連の卒業研究／`bn_discretization`・`bn_sampling`：ベイジアンネットワーク研究．対応するデモ記事 research-note-* は削除済み）
+- [x] `anti-composition` のHEIC写真をJPEGに変換して本文に埋め込み，スコアPDFも画像化して埋め込み（2026-08-24）
 - [ ] `research/index.html` ページ自体の前文・見出し文を作成する（現状は見出しのみ）
 - [ ] 作品集：`Lyric Pieces Op. 2` の解説文を追加する
 - [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）

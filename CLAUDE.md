@@ -37,6 +37,8 @@
     ├─ street-blockage-robot-1/      実記事：狭隘道路の道路閉塞評価モデル（卒業論文，series: street-blockage-robot）
     ├─ street-blockage-robot-2/      実記事：狭隘道路の試行的提案（卒業制作，模型写真＋ポスターPDF）
     ├─ street-blockage-robot-3/      実記事：耐災害スマートシティ（五月祭展示，series: street-blockage-robot）
+    ├─ bn_discretization/            実記事：BNの限界状態面情報を用いた変数離散化（査読付論文，series: bn_research）
+    ├─ bn_sampling/                  実記事：リスク適応型サンプリング・離散化（UQ Summer School ポスター，series: bn_research）
     └─ （研究メモ・エッセイ・日記のデモ記事3件，DEMO CONTENTバナー付き，dummy: true）
 ```
 
@@ -109,6 +111,9 @@
 - **`street-blockage-robot-2` のポスターを合成**：卒業制作最終講評用に12枚に分割してエクスポートされていたPDF（`Presentation_no1〜12.pdf`）を，展示時の実物ポスター写真（`poster.JPG`）と照合して3列×4行の配置を特定し，1枚のポスターに合成．Pythonの `pymupdf`／`Pillow` を使い，Web表示用の縮小JPG（`poster_web.jpg`）とダウンロード用の高解像度PDF（`poster_full.pdf`，元の12分割PDFをラスタライズしてJPEG圧縮することで約57MBから約10MBに削減）を生成した．分割元の12個のPDFは合成後に不要となるため削除を推奨したが，削除は破壊的操作のためユーザーに確認を委ねた．
 - `research/index.html` が参照していた `research-note-1`（廃止済みのデモ記事）へのリンクが壊れていたため除去．
 - HEIC変換について：`pillow-heif` を導入し，HEIC→JPEG変換が可能な状態にした．ただし今回追加した写真はいずれも通常のJPEGであり，変換が必要なHEICファイルは無かった．既存の `contents/anti-composition/part-decomposed.HEIC`（ダウンロードのみでプレビュー不可）は今回は対象外．
+- **（追記）`anti-composition` のHEIC画像をJPEGに変換して埋め込み**：`pillow-heif` で `part-decomposed.HEIC` → `part-decomposed.jpg` に変換（EXIF Orientationは1で回転補正不要，そのまま変換）．元のHEICは資料ダウンロードとして引き続き残している．
+- **（追記）`anti-composition` のスコア譜PDFを画像化して埋め込み**：`score.pdf`（2ページ）を `pymupdf` で `score_p1.jpg`／`score_p2.jpg` にレンダリングし，`.gallery` で並べて表示．PDF自体も引き続きダウンロード資料として残している．
+- **研究記録の実記事を2件追加（ベイジアンネットワーク研究）**：`bn_discretization`（限界状態面情報を用いた変数離散化，査読付論文），`bn_sampling`（リスク適応型サンプリング・離散化，UQ Summer Schoolポスター）．`series: bn_research` で連作として結んだ．`bn_sampling` はポスターPDFを画像化して埋め込み，PDF自体もダウンロード資料として提供．`bn_discretization` は投稿時点でタイトルが `bn_sampling` と同一のコピペミスになっていたため修正．
 
 ## 2026-08-21 に実施した整理内容
 

@@ -176,6 +176,34 @@ window.SCORE_DATA = {
       pc4: 0.4835,
       series: "street-blockage-robot",
       dummy: false
+    },
+    {
+      id: "bn_discretization",
+      title: "構造物のシステム信頼性評価のための限界状態面情報を用いたベイジアンネットワーク変数離散化",
+      url: "/contents/bn_discretization/",
+      date: "2026-08-01",
+      isDateExact: false,
+      kind: "研究紹介",
+      pc1: -0.42,
+      pc2: 0.0619,
+      pc3: 0.1352,
+      pc4: -0.2248,
+      series: "bn_research",
+      dummy: false
+    },
+    {
+      id: "bn_sampling",
+      title: "リスク情報を用いた拡張ベイジアンネットワークの適応的構築 --サンプリング・変数離散化・CPT学習によるシステム信頼性評価--",
+      url: "/contents/bn_sampling/",
+      date: "2026-08-01",
+      isDateExact: false,
+      kind: "研究紹介",
+      pc1: -0.42,
+      pc2: -0.0329,
+      pc3: -0.3427,
+      pc4: -0.8112,
+      series: "bn_research",
+      dummy: false
     }
   ]
 };
