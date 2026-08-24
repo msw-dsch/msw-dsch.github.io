@@ -108,34 +108,6 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
-      id: "research-note-1",
-      title: "確率的リスク評価モデルの覚書（デモ）",
-      url: "/contents/research-note-1/",
-      date: "2023-09-12",
-      isDateExact: false,
-      kind: "研究メモ（デモ）",
-      pc1: -0.42,
-      pc2: 0.9661,
-      pc3: -0.1984,
-      pc4: 0.7001,
-      series: "demo-research",
-      dummy: true
-    },
-    {
-      id: "research-note-2",
-      title: "空間構成とハザードマップ（デモ）",
-      url: "/contents/research-note-2/",
-      date: "2023-09-30",
-      isDateExact: false,
-      kind: "研究メモ（デモ）",
-      pc1: -0.37,
-      pc2: 0.2619,
-      pc3: -0.2942,
-      pc4: 0.2624,
-      series: "demo-research",
-      dummy: true
-    },
-    {
       id: "five-in-a-row",
       title: "Five in a Row",
       url: "/contents/five-in-a-row/",
@@ -150,18 +122,32 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
-      id: "research-note-3",
-      title: "不確実性の記述について（デモ）",
-      url: "/contents/research-note-3/",
-      date: "2024-11-02",
+      id: "street-blockage-robot-1",
+      title: "狭隘道路を多く有する地区における震災時の道路閉塞評価モデルの提案",
+      url: "/contents/street-blockage-robot-1/",
+      date: "2024-11-01",
       isDateExact: false,
-      kind: "研究メモ（デモ）",
-      pc1: -0.46,
-      pc2: -0.0443,
-      pc3: -0.7455,
-      pc4: 0.9369,
-      series: null,
-      dummy: true
+      kind: "研究紹介",
+      pc1: -0.42,
+      pc2: -0.7287,
+      pc3: -0.9031,
+      pc4: 0.6501,
+      series: "street-blockage-robot",
+      dummy: false
+    },
+    {
+      id: "street-blockage-robot-2",
+      title: "狭隘道路に関する試⾏的提案 --デジタルツインと「外構ロボット」によるシステム構築--",
+      url: "/contents/street-blockage-robot-2/",
+      date: "2025-02-01",
+      isDateExact: false,
+      kind: "研究紹介",
+      pc1: -0.42,
+      pc2: -0.3726,
+      pc3: -0.7127,
+      pc4: 0.554,
+      series: "street-blockage-robot",
+      dummy: false
     },
     {
       id: "essay-1",
@@ -176,6 +162,20 @@ window.SCORE_DATA = {
       pc4: -0.5807,
       series: null,
       dummy: true
+    },
+    {
+      id: "street-blockage-robot-3",
+      title: "ロボットと協働する耐災害スマートシティ",
+      url: "/contents/street-blockage-robot-3/",
+      date: "2025-05-01",
+      isDateExact: false,
+      kind: "研究紹介",
+      pc1: -0.42,
+      pc2: 0.9245,
+      pc3: -0.421,
+      pc4: 0.4835,
+      series: "street-blockage-robot",
+      dummy: false
     }
   ]
 };

@@ -5,7 +5,8 @@
 ## コンテンツ
 
 - [ ] 略歴（`introduction/`）ページの本文を作成する
-- [ ] 研究記録（`research/`）ページの本文を作成する（建築・災害リスク関連の研究紹介）。実記事ができたら `contents/<slug>/source.html` を新規作成して `python tools/build.py` を実行し，対応するデモ記事（research-note-*）は削除する
+- [x] 研究記録の実記事を追加する（2026-08-24，`street-blockage-robot-1〜3`．狭隘道路の道路閉塞評価モデル〜卒業制作〜五月祭展示の一連の卒業研究．対応するデモ記事 research-note-* は削除済み）
+- [ ] `research/index.html` ページ自体の前文・見出し文を作成する（現状は見出しのみ）
 - [ ] 作品集：`Lyric Pieces Op. 2` の解説文を追加する
 - [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）
 - [ ] 楽曲探索：ロースラヴェツ以外の記事を追加するか検討する
@@ -35,6 +36,7 @@
 - [x] カテゴリ別一覧ページ（composition/・music/）を廃止（2026-08-23）
 - [ ] OGPタグ（`og:title`，`og:image`など）を追加する（SNSシェア時の見栄え向上）
 - [ ] 独自ドメインの要否を検討する
+- [ ] `contents/street-blockage-robot-2/Presentation_no1〜12.pdf`（分割元，計約57MB）を削除するか判断する。`poster_full.pdf`に合成済みで記事からは参照していない
 
 ## 公開
 

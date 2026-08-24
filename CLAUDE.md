@@ -23,7 +23,7 @@
 │   ├─ score-data.js                 スコア譜のデータ（build.pyが自動生成，直接編集しない）
 │   └─ score.js                      アイコンナビ／スコア譜・パート譜の描画エンジン
 ├─ introduction/index.html           略歴（本文未着手）
-├─ research/index.html               研究記録（本文未着手。デモ記事へのリンクあり）
+├─ research/index.html               研究記録（本文未着手。見出しのみ）
 └─ contents/                         記事の実体はすべてここに平置き（カテゴリ別フォルダには分けない）
     ├─ festive-sonata-op1/           実記事：Festive Sonata Op. 1（パート譜＋楽譜PDF）
     │   ├─ source.html               ← 編集するのはこちら（メタデータ＋本文）
@@ -34,7 +34,10 @@
     ├─ five-in-a-row/                実記事：Five in a Row（楽譜PDF＋対局盤面xlsx2点）
     ├─ anti-composition/             実記事：Anti Composition（staff meeting in progressと連作）
     ├─ roslavets/                    実記事：ロースラヴェツ
-    └─ （研究メモ・エッセイ・日記のデモ記事6件，DEMO CONTENTバナー付き，dummy: true）
+    ├─ street-blockage-robot-1/      実記事：狭隘道路の道路閉塞評価モデル（卒業論文，series: street-blockage-robot）
+    ├─ street-blockage-robot-2/      実記事：狭隘道路の試行的提案（卒業制作，模型写真＋ポスターPDF）
+    ├─ street-blockage-robot-3/      実記事：耐災害スマートシティ（五月祭展示，series: street-blockage-robot）
+    └─ （研究メモ・エッセイ・日記のデモ記事3件，DEMO CONTENTバナー付き，dummy: true）
 ```
 
 カテゴリ別の一覧ページ（旧 `music/index.html`，`composition/index.html`）は2026-08-23に廃止した．全記事への導線はスコア譜（index.html）と記事間の遷移（パート譜の「次の記事へ」など）に一本化している．カテゴリ（作品・楽曲探索・研究記録）はスコア譜の声部を決める要素ではないため，URL構造でもカテゴリを前提にしない．
@@ -96,7 +99,16 @@
 - `.gitattributes` に `*.pdf`／`*.xlsx`／`*.HEIC`／`*.heic` のbinary指定を追加．
 - **カテゴリラベルの表示を撤廃**：記事ページの見出し上のラベル（`eyebrow`）が既定で「作品 ｜ 2021」のように `kind`（内部分類）を名乗っていたのをやめ，年のみ（「2021」）に変更．スコア譜のツールチップも「S ｜ 作品 ｜ 2021-03-09」から `kind` を外し「S ｜ 2021-03-09（デモ）」のように，声部・日付・デモ表記のみにした．`kind` は `source.html` の中では作者向けの分類として引き続き必須項目だが，サイト上には表示しない．
 - **カテゴリ別一覧ページ（`composition/index.html`・`music/index.html`）を廃止**：ディレクトリごと削除．受賞歴などの付随情報も移設せずそのまま削除した．全記事への導線はスコア譜と記事間遷移に一本化．
-- **スコア譜を4声部の「和音」表示に変更**：index.htmlのSATB4段を，記事ベクトルの第1〜4主成分（`pc1`〜`pc4`）にそれぞれ直接対応させた．1記事が4段すべてに同時に音符として現れ，薄い縦線で結ばれる「和音」になる．同一連作の連桁も4段で並行して引かれる．パート譜（記事ページ）側は変更なく，`pc1` のみを使った1段の譜表のまま．`pc2`〜`pc4` は `source.html` で省略可能で，省略時はslugから決定論的に生成した仮値（`tools/build.py` の `hash_pc()`）で自動的に埋まる．
+- **スコア譜を4声部の「和音」表示に変更**：index.htmlのSATB4段を，記事ベクトルの第1〜4主成分（`pc1`〜`pc4`）にそれぞれ直接対応させた．1記事が4段すべてに同時に音符として現れる「和音」になる．同一連作の連桁も4段で並行して引かれる．パート譜（記事ページ）側は変更なく，`pc1` のみを使った1段の譜表のまま．`pc2`〜`pc4` は `source.html` で省略可能で，省略時はslugから決定論的に生成した仮値（`tools/build.py` の `hash_pc()`）で自動的に埋まる．
+
+## 2026-08-24 に実施した作業
+
+- **スコア譜の和音を結ぶ縦線を削除**：4声（SATB）表示自体は正しく機能していたため，視覚的な補助線（`drawChordConnector`）のみ撤去．
+- **研究記録の実記事を3件追加**：`street-blockage-robot-1`（狭隘道路の道路閉塞評価モデル，卒業論文），`street-blockage-robot-2`（狭隘道路に関する試行的提案，卒業制作），`street-blockage-robot-3`（ロボットと協働する耐災害スマートシティ，五月祭展示）．3記事は一連の卒業研究の続き物のため `series: street-blockage-robot` で統一し，連桁でつながるようにした．投稿日は本文中の記述（2024/11・2025/2・2025/5）に基づき仮に設定（`date_exact: false`）．
+- **記事内に写真を埋め込む仕組みを追加**：`assets/score.css` に `.gallery`（複数枚を並べるグリッド）と `figure.figure-full`（1枚を大きく見せる）のスタイルを新設．サイトで写真を本文に埋め込むのはこれが初めて．
+- **`street-blockage-robot-2` のポスターを合成**：卒業制作最終講評用に12枚に分割してエクスポートされていたPDF（`Presentation_no1〜12.pdf`）を，展示時の実物ポスター写真（`poster.JPG`）と照合して3列×4行の配置を特定し，1枚のポスターに合成．Pythonの `pymupdf`／`Pillow` を使い，Web表示用の縮小JPG（`poster_web.jpg`）とダウンロード用の高解像度PDF（`poster_full.pdf`，元の12分割PDFをラスタライズしてJPEG圧縮することで約57MBから約10MBに削減）を生成した．分割元の12個のPDFは合成後に不要となるため削除を推奨したが，削除は破壊的操作のためユーザーに確認を委ねた．
+- `research/index.html` が参照していた `research-note-1`（廃止済みのデモ記事）へのリンクが壊れていたため除去．
+- HEIC変換について：`pillow-heif` を導入し，HEIC→JPEG変換が可能な状態にした．ただし今回追加した写真はいずれも通常のJPEGであり，変換が必要なHEICファイルは無かった．既存の `contents/anti-composition/part-decomposed.HEIC`（ダウンロードのみでプレビュー不可）は今回は対象外．
 
 ## 2026-08-21 に実施した整理内容
 
@@ -113,7 +125,7 @@
 - **ヘッダーの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`introduction/index.html`・`research/index.html` の3ページは対象外で，`<header>` を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
 - **`pc1`〜`pc4`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てている（`pc2`〜`pc4`は省略時に自動生成される仮値）だけで，本文からベクトルを生成する仕組みはまだ無い．
 - **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
-- **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録は実記事が無いため，スコア譜上は `contents/` 内のデモ記事（`dummy: true`）が代わりに表示されている．
+- **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
 - **Identity / Contact / Help の実内容**：index.html内の3セクションは英語見出し＋仮のプレースホルダー文章．Contactは実際の連絡先が未定（ダミーの `mail@example.invalid` を表示）．
 - **作品集の未記入箇所**：`Lyric Pieces Op. 2` の解説文が空欄．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
