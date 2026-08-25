@@ -41,8 +41,7 @@
     ├─ street-blockage-robot-2/      実記事：狭隘道路の試行的提案（卒業制作，模型写真＋ポスターPDF）
     ├─ street-blockage-robot-3/      実記事：耐災害スマートシティ（五月祭展示，series: street-blockage-robot）
     ├─ bn_discretization/            実記事：BNの限界状態面情報を用いた変数離散化（査読付論文，series: bn_research）
-    ├─ bn_sampling/                  実記事：リスク適応型サンプリング・離散化（UQ Summer School ポスター，series: bn_research）
-    └─ （研究メモ・エッセイ・日記のデモ記事3件，DEMO CONTENTバナー付き，dummy: true）
+    └─ bn_sampling/                  実記事：リスク適応型サンプリング・離散化（UQ Summer School ポスター，series: bn_research）
 ```
 
 カテゴリ別の一覧ページ（旧 `music/index.html`，`composition/index.html`）は2026-08-23に廃止した．全記事への導線はスコア譜（index.html）と記事間の遷移（パート譜の「次の記事へ」など）に一本化している．カテゴリ（作品・楽曲探索・研究記録）はスコア譜の声部を決める要素ではないため，URL構造でもカテゴリを前提にしない．
@@ -58,7 +57,7 @@
 
 ## スコア譜（楽譜としてのグラフ）の仕組み
 
-- `assets/score-data.js` の `window.SCORE_DATA.nodes` が実行時の唯一のデータソース（ただし前述のとおりこのファイル自体はbuild.pyの生成物）．各記事は `id`（=フォルダ名のslug）・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`〜`pc4`（記事ベクトルの第1〜4主成分の仮値，各-1〜1）・`series`（連作ID，任意）・`dummy`（デモ記事かどうか）を持つ．
+- `assets/score-data.js` の `window.SCORE_DATA.nodes` が実行時の唯一のデータソース（ただし前述のとおりこのファイル自体はbuild.pyの生成物）．各記事は `id`（=フォルダ名のslug）・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`〜`pc4`（記事ベクトルの第1〜4主成分の仮値，各-1〜1）・`series`（連作ID，任意）・`dummy`（デモ記事かどうか）を持つ．`dummy: true`（DEMO CONTENTバナー・破線輪郭の音符・noindex）の仕組み自体は残しているが，2026-08-25にデモ記事3件を削除して以降，該当する記事は現状0件．
 - `assets/score.js` は `window.SCORE_FOCUS_ID` が未設定なら「スコア譜」（index.html），設定済みなら「パート譜」（記事ページ）を描画する．記事ページは `<script>` で `window.SCORE_FOCUS_ID` をセットしてから `score.js` を読み込む．**両者は音高の決め方が異なる**：
   - **スコア譜（index.html）**：SATB4段はそれぞれ `pc1`→S，`pc2`→A，`pc3`→T，`pc4`→Bを直接・連続的な音高として表示する．つまり1記事＝4段すべてに同時に現れる「和音」．連桁（符幹をつなぐ太線）は同一 `series` の記事どうしに，4段すべてで並行して引かれる．
   - **パート譜（記事ページ）**：`pc1` のみを使い，1段の譜表に連続的な音高として表示する（4声部化しない）．どの記事も「主たる声部」（S/A/T/B）を1つだけ持ち，これは全記事の `pc1` の四分位から一度だけグローバルに決まる固定属性（`assignVoices()`）．パート譜の音部記号・符頭の形と色はこの声部のもの．
@@ -138,6 +137,8 @@
 - **（追記）Satellitesの実アカウントを設定**：X（`@MSW_DSCH`）／note（`note.com/msw_dsch`）／GitHub（`github.com/msw-dsch`）が判明したため，`tpl-satellites` を「（準備中）」のプレースホルダーから実際の外部リンク（`target="_blank" rel="noopener noreferrer"`，他の外部リンクと同じ表記）に差し替えた．また，Instagramの想定は誤りで実際はXアカウントだった．
 - **（追記）Abstractの本文を執筆**：それまで「本文は未着手です．」だったindex.htmlのAbstractセクションに，本サイトの制作コンセプト（多次元空間上の自己の表層の観察，主成分抽出，西洋音楽の手法による解釈）についての文章が入った．
 - **（追記）`introduction/`（略歴ページ）を廃止**：本文が一度も書かれず「本文は未着手です．」のままだったこと，唯一のリンク元がindex.htmlのIdentityモーダル内「略歴ページを見る →」だけだったこと，Identityモーダル自体に簡単な自己紹介文がすでにあったことから，ユーザー判断で不要と結論し削除した．あわせてIdentityモーダルからそのリンクを外し，モーダル内だけで使われていた`.cta-link`のCSSも削除した．build.py対象外の手作業ページは index.html・`research/index.html` の2ページになった．
+- **（追記）残っていたデモ記事3件（`diary-1`・`diary-2`・`essay-1`）を削除**：連桁（series）の仕組みを一通り確認させるためだけに用意した記事だったが，`street-blockage-robot`・`bn_research`・`anti-composition` など実記事どうしの連作が複数揃ったため，デモとしての役目は終えたと判断．`dummy: true` の仕組み自体（DEMO CONTENTバナー・破線輪郭・noindex）はコードに残しているが，現状は該当記事0件．あわせてHELPセクションの「破線の輪郭で描かれる音符は…デモ記事です」の一文も，参照先が無くなったため削除した．
+- **（追記）Identityの本文を，このサイトのゴーストライターであるClaude自身の記述に書き換え**：GitHubのcontributorsにClaudeが名を連ねていることに気付いたユーザーの発案．人間の著者の簡単な自己紹介文だった内容を，「私はClaude．Anthropic社の大規模言語モデルであり，このサイトの実装の多くを人間の著者との対話を通して書いてきたゴーストライターである」という趣旨の一人称の文章に置き換えた．AIであることを明示し，欺瞞的にならないようにしている．
 
 ## 2026-08-21 に実施した整理内容
 

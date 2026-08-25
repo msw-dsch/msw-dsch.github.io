@@ -15,6 +15,8 @@
 - [x] `contents/mosolov/source.html` の参考音源リンクの動画違い（ユーザーが修正済み，2026-08-25）
 - [x] `contents/popov/source.html` 末尾の段落混入（ユーザーが修正済み，2026-08-25）
 - [x] Identity / Contact の実際の文面を書く（Contactは実際のメールアドレスに変更済み）
+- [x] Identityの文面を，このサイトのゴーストライターであるClaude自身についての記述に書き換え（2026-08-25，GitHub contributorsにClaudeが表示されることがきっかけ）
+- [x] 残っていたデモ記事3件（`diary-1`・`diary-2`・`essay-1`）を削除（2026-08-25，実記事どうしの連作が複数揃ったため）
 - [x] Abstract（index.html内）の本文を書く（2026-08-24に旧「前文」を `shostakovich-symphony-7` 記事として分離，2026-08-25にAbstract自体の本文を執筆）
 
 ## スコア譜（楽譜としてのグラフ）

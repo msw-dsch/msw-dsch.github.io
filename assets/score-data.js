@@ -10,32 +10,6 @@
 window.SCORE_DATA = {
   nodes: [
     {
-      id: "diary-1",
-      title: "楽譜と偶然性の覚書（デモ）",
-      url: "/contents/diary-1/",
-      date: "2020-06-15",
-      kind: "日記（デモ）",
-      pc1: -0.15,
-      pc2: 0.0341,
-      pc3: -0.86,
-      pc4: 0.9766,
-      series: "demo-diary",
-      dummy: true
-    },
-    {
-      id: "diary-2",
-      title: "無題のスケッチ帳より（デモ）",
-      url: "/contents/diary-2/",
-      date: "2020-07-01",
-      kind: "日記（デモ）",
-      pc1: -0.25,
-      pc2: 0.0619,
-      pc3: 0.5236,
-      pc4: 0.0334,
-      series: "demo-diary",
-      dummy: true
-    },
-    {
       id: "festive-sonata-op1",
       title: "Festive Sonata Op. 1",
       url: "/contents/festive-sonata-op1/",
@@ -127,19 +101,6 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
-      id: "essay-1",
-      title: "ロシア構成主義と音楽（デモ）",
-      url: "/contents/essay-1/",
-      date: "2025-04-18",
-      kind: "エッセイ（デモ）",
-      pc1: 0.11,
-      pc2: -0.5591,
-      pc3: -0.352,
-      pc4: -0.5807,
-      series: null,
-      dummy: true
-    },
-    {
       id: "street-blockage-robot-3",
       title: "ロボットと協働する耐災害スマートシティ",
       url: "/contents/street-blockage-robot-3/",
@@ -189,6 +150,19 @@ window.SCORE_DATA = {
       pc3: -0.3427,
       pc4: -0.8112,
       series: "bn_research",
+      dummy: false
+    },
+    {
+      id: "dukas",
+      title: "ポール・デュカス",
+      url: "/contents/dukas/",
+      date: "2026-08-25",
+      kind: "楽曲探索",
+      pc1: 0.15,
+      pc2: -0.2774,
+      pc3: -0.3212,
+      pc4: -0.9833,
+      series: null,
       dummy: false
     },
     {
