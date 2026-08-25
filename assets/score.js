@@ -226,12 +226,12 @@
         '<span class="label" id="scoreToolbarLabel"></span>' +
         '<div class="controls" id="scoreControls"></div>' +
       '</div>' +
+      '<div class="readout" id="scoreReadout"></div>' +
       '<div class="canvas-wrap">' +
         '<svg class="kandinsky-bg" id="scoreKbg" viewBox="0 0 1000 620" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>' +
         '<canvas id="scoreCanvas" class="score-canvas" role="img" aria-label="生成楽譜。ノートをクリックするとその記事へ移動する。"></canvas>' +
         '<div class="tooltip" id="scoreTooltip"><span class="cat"></span><span class="title"></span></div>' +
-      '</div>' +
-      '<div class="readout" id="scoreReadout"></div>';
+      '</div>';
 
     var canvas = document.getElementById("scoreCanvas");
     var ctx = canvas.getContext("2d");
@@ -351,7 +351,7 @@
       controls.innerHTML = "";
       readout.innerHTML = "";
       if (mode === "score") {
-        toolbarLabel.textContent = "スコア譜 — " + NODES.length + "件（うちデモ" + NODES.filter(function (n) { return n.dummy; }).length + "件）";
+        toolbarLabel.textContent = NODES.length + "件";
         var wanderBtn = document.createElement("button");
         wanderBtn.className = "act"; wanderBtn.type = "button"; wanderBtn.textContent = "さまよう";
         wanderBtn.addEventListener("click", function () {
@@ -361,13 +361,12 @@
         controls.appendChild(wanderBtn);
       } else {
         var n = byId[focusId];
-        toolbarLabel.textContent = "パート譜 — 「" + n.title + "」を起点に";
         var backLink = document.createElement("a");
-        backLink.className = "act"; backLink.href = homeHref; backLink.textContent = "◀ スコア譜（全体）へ";
+        backLink.className = "act"; backLink.href = homeHref; backLink.textContent = "◀ 全体へ";
         controls.appendChild(backLink);
 
         var nextBtn = document.createElement("button");
-        nextBtn.className = "act next-btn"; nextBtn.type = "button"; nextBtn.textContent = "次の記事へ →";
+        nextBtn.className = "act next-btn"; nextBtn.type = "button"; nextBtn.textContent = "次の音へ →";
         nextBtn.addEventListener("click", function () {
           location.href = pickNextByRelation(n).url;
         });

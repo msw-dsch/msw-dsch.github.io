@@ -113,7 +113,7 @@ p.deck { font-style: italic; font-size: 18px; color: var(--ink-soft); max-width:
 
 /* ---- 本文セクション共通 ---- */
 
-section.after, section.article-body { max-width: 68ch; padding: 36px 0 8px; scroll-margin-top: 24px; }
+section.after, section.article-body { max-width: 68ch; margin: 0 auto; padding: 36px 0 8px; scroll-margin-top: 24px; }
 section.after p, section.article-body p { margin: 0 0 18px; }
 p.note {
   font-family: 'PT Mono', monospace; font-size: 13px; line-height: 1.85; color: var(--ink-soft);
@@ -274,6 +274,7 @@ figcaption {
   padding: 16px 22px; border-bottom: 1px solid var(--hair); position: relative; z-index: 1;
 }
 .score-toolbar .label { font-family: 'PT Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); width: 100%; }
+.score-toolbar .label:empty { display: none; }
 .score-toolbar .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-left: auto; }
 
 button.act, a.act {
@@ -298,7 +299,7 @@ canvas.score-canvas { display: block; width: 100%; height: auto; cursor: crossha
 .tooltip .cat { display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-2); margin-bottom: 3px; }
 
 .readout {
-  border-top: 1px solid var(--hair); padding: 18px 22px; position: relative; z-index: 1;
+  border-bottom: 1px solid var(--hair); padding: 18px 22px; position: relative; z-index: 1;
   display: flex; justify-content: center;
 }
 .readout:empty { display: none; }
