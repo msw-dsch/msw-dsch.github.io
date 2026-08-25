@@ -65,7 +65,8 @@
 - 音部記号は文字（S/A/Tなど）ではなく，五線の左に描く実際のグリフ（Google Fonts「Noto Music」，ト音記号＝U+1D11E／ヘ音記号＝U+1D122）．スコア譜では段ごとに1つ，パート譜ではその記事の声部の記号を1つだけ表示する．
 - パート譜の末尾には，連作の重みと投稿日・pc1の近さから合成した確率で次の記事へ遷移する「次の記事へ」ボタンがある（`relationWeight()`）．
 - 仕組みの説明はHELPセクション（index.html）にのみ書く．他のページ・セクションでは仕組みの説明を書かない方針．
-- `pc1`〜`pc4` の値，および年のみ判明している記事の月日（`isDateExact: false`）は仮の値．`pc1` は各記事で人手で指定するが，`pc2`〜`pc4` は省略するとslugから決定論的に生成した仮値で自動的に埋まる（`tools/build.py` の `hash_pc()`）．実データが判明次第 `source.html` を直接書き換える．
+- `pc1`〜`pc4` の値は仮の値．`pc1` は各記事で人手で指定するが，`pc2`〜`pc4` は省略するとslugから決定論的に生成した仮値で自動的に埋まる（`tools/build.py` の `hash_pc()`）．実データが判明次第 `source.html` を直接書き換える．
+- `date` は必ず確定した1つの日付を書く．正確な日付が不明な場合も「日付が推定かどうか」を区別する仕組みは持たない（2026-08-25廃止）．本文中に制作年の記載がある記事はその年内の適当な日（例：`YYYY-07-01`）を選んで確定し，制作年の手がかりが本文に全く無い記事は投稿作業を行った日をそのまま使う．
 
 ## 技術構成・制約
 
@@ -124,6 +125,12 @@
 - コンパクトヘッダー（`tools/build.py` の `HEADER_NAV`，および build.py対象外の `introduction/`・`research/`）のラベルから「（前文）」「（略歴）」「（読み方）」の日本語補足を削除し，index.htmlの図形ラベルと表記を統一．IDENTITYアイコンの遷移先も `/introduction/` 直行から `/index.html#identity`（Identityパネルを開く）に統一した．
 - index.htmlのスクロール誘導文言を「前文へ」から「SCROLL」に変更（Abstractが既定で隠れるようになったため）．
 
+## 2026-08-25 に実施した作業
+
+- 未使用の `_to_delete/`（廃止済みheader.html/footer.htmlの残骸，どこからも参照されていなかった）を削除．
+- **投稿日不明の記事5件を「本日投稿」で確定**：`anti-composition`／`five-in-a-row`／`roslavets`／`staff-meeting-in-progress`／`shostakovich-symphony-7` は，本文に日付の根拠が無かったため，一旦 `date_exact: false` かつ本日日付で仮設定した．
+- **（追記）`date_exact`／`isDateExact` の仕組みを完全に廃止**：「日付が推定かどうか」の区別自体が不要という判断により，`tools/build.py`（メタ解析・docstring）・`assets/score-data.js`（生成される`isDateExact`フィールド）・`assets/score.js`（ツールチップの「（推定）」表示）から関連コードを削除し，全 `source.html` から `date_exact:` 行を除去した．あわせて，本文中に実際の制作年の記載がある記事（`anti-composition`＝2023，`five-in-a-row`＝2024，`staff-meeting-in-progress`＝2022）は，年内の適当な日（`YYYY-07-01`）を選んで `date` を確定し直した．本文に制作年の手がかりが全く無い `roslavets`・`shostakovich-symphony-7` は，本日（投稿作業を行った日）のままとした．
+
 ## 2026-08-21 に実施した整理内容
 
 - トップページ（`index.html`）のナビゲーションで，「略歴」リンクが `../introduction/index.html` となっており，サイト外に出る壊れたリンクになっていたバグを修正（`./introduction/index.html` に修正）．
@@ -138,7 +145,7 @@
 
 - **ヘッダー／モーダルの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`introduction/index.html`・`research/index.html` の3ページは対象外で，`<header>` の内容と `.modal-overlay` の枠組み（中身は空で `index.html` からfetchする）を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
 - **`pc1`〜`pc4`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てている（`pc2`〜`pc4`は省略時に自動生成される仮値）だけで，本文からベクトルを生成する仕組みはまだ無い．
-- **投稿日の精度**：年のみ判明している記事は `date_exact: false` として月日を仮に補完している．正確な日付が判明次第，該当する `source.html` を直接書き換えて `python tools/build.py` を実行する．
+- **投稿日の精度**：`date` は確定した1つの日付のみで，推定かどうかの区別は持たない．年しか分からない記事は年内の適当な日（`YYYY-07-01`）で仮確定しているため，正確な日付が判明次第 `source.html` を直接書き換えて `python tools/build.py` を実行する．
 - **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
 - **Abstract の本文が未着手**：index.html内のAbstractセクションは「本文は未着手です．」のプレースホルダーのまま．Identity/Contact/Helpは文面が入っている（Contactは実際のメールアドレスを表示）．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．

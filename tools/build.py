@@ -28,7 +28,6 @@ contents/<slug>/source.html を読み込み，
     pc1     記事ベクトルの第1主成分の仮値（-1〜1）。index.htmlのスコア譜ではソプラノ段の音高になる
 
 省略可能な項目（省略時は自動で補う）:
-    date_exact  日付が正確なら true，年しか分からない等の推定なら false（既定 true）
     series      連作ID。同じseriesを持つ記事どうしが連桁でつながる（既定 なし）
     dummy       true にするとDEMO CONTENTバナー・noindexが自動で付く（既定 false）
     heading     ページ見出し(h1)がtitleと違う場合だけ指定（既定 titleと同じ）
@@ -46,7 +45,6 @@ contents/<slug>/source.html を読み込み，
     title: Lyric Pieces Op. 2
     kind: 作品
     date: 2021-08-15
-    date_exact: false
     pc1: 0.50
     -->
     <p>本文...</p>
@@ -202,7 +200,6 @@ def build_one(slug_dir):
     kind = meta["kind"]
     date = meta["date"]
     year = date[:4]
-    date_exact = truthy(meta.get("date_exact"), default=True)
     pc1 = float(meta["pc1"])
     pc2 = float(meta["pc2"]) if meta.get("pc2") else hash_pc(slug, "pc2")
     pc3 = float(meta["pc3"]) if meta.get("pc3") else hash_pc(slug, "pc3")
@@ -238,7 +235,6 @@ def build_one(slug_dir):
         "title": title,
         "url": f"/contents/{slug}/",
         "date": date,
-        "isDateExact": date_exact,
         "kind": kind,
         "pc1": pc1,
         "pc2": pc2,
@@ -270,7 +266,6 @@ def write_score_data(nodes):
         lines.append(f'      title: {js_value(n["title"])},')
         lines.append(f'      url: {js_value(n["url"])},')
         lines.append(f'      date: {js_value(n["date"])},')
-        lines.append(f'      isDateExact: {js_value(n["isDateExact"])},')
         lines.append(f'      kind: {js_value(n["kind"])},')
         lines.append(f'      pc1: {js_value(n["pc1"])},')
         lines.append(f'      pc2: {js_value(n["pc2"])},')

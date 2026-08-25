@@ -567,7 +567,7 @@
         tooltip.style.opacity = "1";
         tooltip.style.left = (rect.left - wrapRect.left + p.x) + "px";
         tooltip.style.top = (rect.top - wrapRect.top + p.y - 20) + "px";
-        tooltip.querySelector(".cat").textContent = hit.voice + " ｜ " + fmtDate(n.date) + (n.isDateExact === false ? "（推定）" : "") + (n.dummy ? "（デモ）" : "");
+        tooltip.querySelector(".cat").textContent = hit.voice + " ｜ " + fmtDate(n.date) + (n.dummy ? "（デモ）" : "");
         tooltip.querySelector(".title").textContent = n.title + (n.id === focusId ? "（この記事）" : "");
         canvas.style.cursor = n.id === focusId ? "default" : "pointer";
       } else {
