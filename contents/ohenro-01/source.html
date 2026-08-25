@@ -1,0 +1,55 @@
+<!--meta
+title: お遍路旅行記 第1日 — 〇〇 → 〇〇
+kind: 旅行記
+date: YYYY-MM-DD
+pc1: 0.00
+series: ohenro
+dummy: false
+deck: 〇〇から〇〇まで．
+description: お遍路旅行記 第1日．〇〇から〇〇まで．壮大なる愚作より。
+-->
+<!--
+    このsource.htmlは「お遍路旅行記」シリーズのテンプレートです．
+    1日＝1記事とし，このフォルダを丸ごと複製して ohenro-02, ohenro-03 ... と
+    連番のslugにリネームして使ってください．シリーズとして連桁でつながるよう，
+    series: ohenro は全日で共通にしてあります．pc1もシリーズ内では
+    揃えておくと，スコア譜上でひとまとまりに見えます（値は要調整）．
+    タイトル・見出し・table中の項目・地図画像・写真は，すべて仮の値です．
+    実際の内容に置き換えてから python tools/build.py を実行してください．
+-->
+<table style="border-collapse:collapse;margin:0 0 24px;font-size:14px;color:var(--ink-soft);">
+    <tr><td style="color:var(--ink-faint);width:100px;padding:3px 14px 3px 0;">日付</td><td>YYYY年M月D日</td></tr>
+    <tr><td style="color:var(--ink-faint);padding:3px 14px 3px 0;">区間</td><td>〇〇 → 〇〇</td></tr>
+    <tr><td style="color:var(--ink-faint);padding:3px 14px 3px 0;">歩行距離</td><td>約XX km</td></tr>
+    <tr><td style="color:var(--ink-faint);padding:3px 14px 3px 0;">札所</td><td>第◯番 〇〇寺 ほか</td></tr>
+</table>
+<!-- 移動経路の地図．GPSアプリ等から書き出した画像を想定．
+     ファイル名（map.jpg）は自由に変えてよい -->
+<figure class="figure-full">
+    <img src="./map.jpg" alt="第1日の移動経路" loading="lazy">
+    <figcaption>移動経路（〇〇 → 〇〇，約XX km）</figcaption>
+</figure>
+<p>
+    ここに経路の説明を書く．出発地・経由地・到着地，札所の位置関係，歩いた道の様子など．
+</p>
+<p>
+    【日記】
+</p>
+<p>
+    ここから日記本文．
+</p>
+<!-- 日記の途中に写真を挟みたいときは，この.galleryブロックを
+     必要な回数だけ繰り返してください（1枚だけでも複数枚でも可） -->
+<div class="gallery">
+    <figure>
+        <img src="./photo-01.jpg" alt="" loading="lazy">
+        <figcaption></figcaption>
+    </figure>
+    <figure>
+        <img src="./photo-02.jpg" alt="" loading="lazy">
+        <figcaption></figcaption>
+    </figure>
+</div>
+<p>
+    日記本文のつづき．
+</p>
