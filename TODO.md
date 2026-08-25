@@ -11,11 +11,11 @@
 - [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）
 - [x] 作品集：`Lyric Pieces Op. 2` の解説文を追加，新規に `After Čiurlionis` を追加（2026-08-24）
 - [x] 楽曲探索：`mosolov`（モソロフ），`popov`（ポポーフ）を追加（2026-08-25）
-- [x] SNSアカウント欄を図形ナビに追加（2026-08-25，6つ目の図形「Satellites」，index.html全ページ共通）。Instagram/note/GitHubの3枠を用意したが，実際のURL/アカウント名は未定のため`index.html`の`tpl-satellites`内に「（準備中）」のプレースホルダーを置いている。判明次第 `tpl-satellites` を書き換える
+- [x] SNSアカウント欄を図形ナビに追加（2026-08-25，6つ目の図形「Satellites」，index.html全ページ共通）。X（`@MSW_DSCH`）／note（`note.com/msw_dsch`）／GitHub（`github.com/msw-dsch`）の3リンクを`tpl-satellites`に設定済み
 - [x] `contents/mosolov/source.html` の参考音源リンクの動画違い（ユーザーが修正済み，2026-08-25）
 - [x] `contents/popov/source.html` 末尾の段落混入（ユーザーが修正済み，2026-08-25）
 - [x] Identity / Contact の実際の文面を書く（Contactは実際のメールアドレスに変更済み）
-- [ ] Abstract（index.html内）の本文を書く（2026-08-24，旧「前文」は `shostakovich-symphony-7` 記事として分離し，Abstractはプレースホルダーのまま）
+- [x] Abstract（index.html内）の本文を書く（2026-08-24に旧「前文」を `shostakovich-symphony-7` 記事として分離，2026-08-25にAbstract自体の本文を執筆）
 
 ## スコア譜（楽譜としてのグラフ）
 

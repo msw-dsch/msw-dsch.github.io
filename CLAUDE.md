@@ -134,8 +134,10 @@
 - **（追記）`date_exact`／`isDateExact` の仕組みを完全に廃止**：「日付が推定かどうか」の区別自体が不要という判断により，`tools/build.py`（メタ解析・docstring）・`assets/score-data.js`（生成される`isDateExact`フィールド）・`assets/score.js`（ツールチップの「（推定）」表示）から関連コードを削除し，全 `source.html` から `date_exact:` 行を除去した．あわせて，本文中に実際の制作年の記載がある記事（`anti-composition`＝2023，`five-in-a-row`＝2024，`staff-meeting-in-progress`＝2022）は，年内の適当な日（`YYYY-07-01`）を選んで `date` を確定し直した．本文に制作年の手がかりが全く無い `roslavets`・`shostakovich-symphony-7` は，本日（投稿作業を行った日）のままとした．
 - **楽曲探索の実記事を2件追加**：`mosolov`（アレクサンドル・モソロフ），`popov`（ガヴリイル・ポポーフ）．いずれも `roslavets` と同じ「20世紀初頭ロシアのピアノ曲」シリーズの並び．
 - **YouTube動画をページ内に埋め込み表示**：`assets/score.css` に `.video-embed`（16:9のレスポンシブ枠，`padding-bottom: 56.25%` トリック）を新設．サイト内の全YouTubeリンク（`festive-sonata-op1`・`lyric-pieces-op2`×5・`five-in-a-row`・`after-ciurlionis`・`roslavets`・`mosolov`・`popov`×2，計12箇所）を，`<a>`リンクから `youtube-nocookie.com` 経由の `<iframe>` 埋め込みに置き換えた．タイムスタンプ付きリンク（`five-in-a-row` の `&t=1091`）は埋め込みURLの `?start=1091` として引き継いだ．`<iframe src>` には必ず `youtube-nocookie.com/embed/<動画ID>` 形式を使うこと（`youtu.be/...` の視聴用URLをそのまま `src` に入れても埋め込み不可）．
-- **6つ目の図形「Satellites」を追加**：SNS等の外部アカウントへの導線用．index.htmlの全面アイコン（右下）とコンパクトヘッダー（左上）の両方に追加した．Abstract/Identity/Contact/Helpと同じモーダル方式で，`tpl-satellites` テンプレートにInstagram/note/GitHubの3項目をまとめて表示する．実際のアカウントURLは未定のため「（準備中）」のプレースホルダーのまま（`index.html` の `tpl-satellites` を編集すれば反映される）．
+- **6つ目の図形「Satellites」を追加**：SNS等の外部アカウントへの導線用．index.htmlの全面アイコン（右下）とコンパクトヘッダー（左上）の両方に追加した．Abstract/Identity/Contact/Helpと同じモーダル方式で，`tpl-satellites` テンプレートにX/note/GitHubの3項目をまとめて表示する．
 - **（追記）Satellitesのアイコンを描き直し**：初回実装では環のある円（惑星のモチーフ，`var(--k-blue-deep)`）にしたが，「単語の意味を直訳せず，カンディンスキー《小さな世界 IV》からの引用に留める」という指摘を受け，散らばる大きさの異なる3つの小円（`var(--k-blue-deep)`）に描き直した．他5つの図形（円・三角形・格子・点・線）と同じ「抽象幾何形態の引用」という語彙に統一している．名称も「Planet」から「Satellites」に変更した．
+- **（追記）Satellitesの実アカウントを設定**：X（`@MSW_DSCH`）／note（`note.com/msw_dsch`）／GitHub（`github.com/msw-dsch`）が判明したため，`tpl-satellites` を「（準備中）」のプレースホルダーから実際の外部リンク（`target="_blank" rel="noopener noreferrer"`，他の外部リンクと同じ表記）に差し替えた．また，Instagramの想定は誤りで実際はXアカウントだった．
+- **（追記）Abstractの本文を執筆**：それまで「本文は未着手です．」だったindex.htmlのAbstractセクションに，本サイトの制作コンセプト（多次元空間上の自己の表層の観察，主成分抽出，西洋音楽の手法による解釈）についての文章が入った．
 
 ## 2026-08-21 に実施した整理内容
 
@@ -153,7 +155,6 @@
 - **`pc1`〜`pc4`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てている（`pc2`〜`pc4`は省略時に自動生成される仮値）だけで，本文からベクトルを生成する仕組みはまだ無い．
 - **投稿日の精度**：`date` は確定した1つの日付のみで，推定かどうかの区別は持たない．年しか分からない記事は年内の適当な日（`YYYY-07-01`）で仮確定しているため，正確な日付が判明次第 `source.html` を直接書き換えて `python tools/build.py` を実行する．
 - **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
-- **Abstract の本文が未着手**：index.html内のAbstractセクションは「本文は未着手です．」のプレースホルダーのまま．Identity/Contact/Helpは文面が入っている（Contactは実際のメールアドレスを表示）．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
 - **OGPタグ**：`meta description` は追加済みだが，`og:title`・`og:image` などSNSシェア向けのタグは未設定．
 
