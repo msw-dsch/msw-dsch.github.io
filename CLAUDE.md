@@ -14,7 +14,7 @@
 
 ```
 /
-├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）．Abstract/Identity/Contact/Helpは常設せず，アイコンクリックでモーダルウィンドウとして表示（内容は<template>で保持）
+├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）．Abstract/Identity/Contact/Help/Planetは常設せず，アイコンクリックでモーダルウィンドウとして表示（内容は<template>で保持）
 ├─ icon.JPG                          サイトアイコン画像（ファビコンとして使用）
 ├─ tools/
 │   └─ build.py                      記事ページ生成スクリプト（後述）
@@ -133,7 +133,8 @@
 - **投稿日不明の記事5件を「本日投稿」で確定**：`anti-composition`／`five-in-a-row`／`roslavets`／`staff-meeting-in-progress`／`shostakovich-symphony-7` は，本文に日付の根拠が無かったため，一旦 `date_exact: false` かつ本日日付で仮設定した．
 - **（追記）`date_exact`／`isDateExact` の仕組みを完全に廃止**：「日付が推定かどうか」の区別自体が不要という判断により，`tools/build.py`（メタ解析・docstring）・`assets/score-data.js`（生成される`isDateExact`フィールド）・`assets/score.js`（ツールチップの「（推定）」表示）から関連コードを削除し，全 `source.html` から `date_exact:` 行を除去した．あわせて，本文中に実際の制作年の記載がある記事（`anti-composition`＝2023，`five-in-a-row`＝2024，`staff-meeting-in-progress`＝2022）は，年内の適当な日（`YYYY-07-01`）を選んで `date` を確定し直した．本文に制作年の手がかりが全く無い `roslavets`・`shostakovich-symphony-7` は，本日（投稿作業を行った日）のままとした．
 - **楽曲探索の実記事を2件追加**：`mosolov`（アレクサンドル・モソロフ），`popov`（ガヴリイル・ポポーフ）．いずれも `roslavets` と同じ「20世紀初頭ロシアのピアノ曲」シリーズの並び．
-- **YouTube動画をページ内に埋め込み表示**：`assets/score.css` に `.video-embed`（16:9のレスポンシブ枠，`padding-bottom: 56.25%` トリック）を新設．サイト内の全YouTubeリンク（`festive-sonata-op1`・`lyric-pieces-op2`×5・`five-in-a-row`・`after-ciurlionis`・`roslavets`・`mosolov`・`popov`×2，計12箇所）を，`<a>`リンクから `youtube-nocookie.com` 経由の `<iframe>` 埋め込みに置き換えた．タイムスタンプ付きリンク（`five-in-a-row` の `&t=1091`）は埋め込みURLの `?start=1091` として引き継いだ．
+- **YouTube動画をページ内に埋め込み表示**：`assets/score.css` に `.video-embed`（16:9のレスポンシブ枠，`padding-bottom: 56.25%` トリック）を新設．サイト内の全YouTubeリンク（`festive-sonata-op1`・`lyric-pieces-op2`×5・`five-in-a-row`・`after-ciurlionis`・`roslavets`・`mosolov`・`popov`×2，計12箇所）を，`<a>`リンクから `youtube-nocookie.com` 経由の `<iframe>` 埋め込みに置き換えた．タイムスタンプ付きリンク（`five-in-a-row` の `&t=1091`）は埋め込みURLの `?start=1091` として引き継いだ．`<iframe src>` には必ず `youtube-nocookie.com/embed/<動画ID>` 形式を使うこと（`youtu.be/...` の視聴用URLをそのまま `src` に入れても埋め込み不可）．
+- **6つ目の図形「Planet」を追加**：SNS等の外部アカウントへの導線用．環のある小さな円（惑星のモチーフ，`var(--k-blue-deep)`）で，index.htmlの全面アイコン（右下）とコンパクトヘッダー（左上）の両方に追加した．Abstract/Identity/Contact/Helpと同じモーダル方式で，`tpl-planet` テンプレートにInstagram/note/GitHubの3項目をまとめて表示する．実際のアカウントURLは未定のため「（準備中）」のプレースホルダーのまま（`index.html` の `tpl-planet` を編集すれば反映される）．
 
 ## 2026-08-21 に実施した整理内容
 

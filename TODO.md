@@ -11,9 +11,9 @@
 - [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）
 - [x] 作品集：`Lyric Pieces Op. 2` の解説文を追加，新規に `After Čiurlionis` を追加（2026-08-24）
 - [x] 楽曲探索：`mosolov`（モソロフ），`popov`（ポポーフ）を追加（2026-08-25）
-- [ ] SNSアカウント欄をindex.htmlの図形ナビに追加する（要：対象プラットフォームとURL/アカウント名の確認）
-- [ ] `contents/mosolov/source.html` の参考音源リンクが実際は「ロースラヴェツ ピアノソナタ第1番」の動画になっている（`roslavets`と同一動画ID）。コピペミスの可能性，要確認
-- [ ] `contents/popov/source.html` 末尾（大組曲 Op.6のセクション）に，モソロフ記事と同一の段落（「モソロフ，初期を代表するピアノ作品．…」）が誤って残っている可能性，要確認
+- [x] SNSアカウント欄を図形ナビに追加（2026-08-25，6つ目の図形「Planet」，index.html全ページ共通）。Instagram/note/GitHubの3枠を用意したが，実際のURL/アカウント名は未定のため`index.html`の`tpl-planet`内に「（準備中）」のプレースホルダーを置いている。判明次第 `tpl-planet` を書き換える
+- [x] `contents/mosolov/source.html` の参考音源リンクの動画違い（ユーザーが修正済み，2026-08-25）
+- [x] `contents/popov/source.html` 末尾の段落混入（ユーザーが修正済み，2026-08-25）
 - [x] Identity / Contact の実際の文面を書く（Contactは実際のメールアドレスに変更済み）
 - [ ] Abstract（index.html内）の本文を書く（2026-08-24，旧「前文」は `shostakovich-symphony-7` 記事として分離し，Abstractはプレースホルダーのまま）
 

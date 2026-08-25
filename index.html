@@ -43,6 +43,11 @@
                 <line class="shape" x1="980" y1="880" x2="1400" y2="600" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"></line>
                 <circle class="shape" cx="1400" cy="600" r="9" fill="var(--ink)"></circle>
             </g>
+            <g class="hotspot" tabindex="0" data-target="#planet" data-label="PLANET">
+                <title>PLANET</title>
+                <ellipse class="shape" cx="1470" cy="880" rx="46" ry="13" fill="none" stroke="var(--k-blue-deep)" stroke-width="1.6" transform="rotate(-18 1470 880)"></ellipse>
+                <circle class="shape" cx="1470" cy="880" r="24" fill="var(--k-blue-deep)" fill-opacity="0.3" stroke="var(--ink)" stroke-width="1.4"></circle>
+            </g>
         </svg>
         <div class="hero-text">
             <p class="eyebrow">MSW-DSCH</p>
@@ -95,7 +100,14 @@
         <p>横位置は投稿日（左が古く，右が新しい）．投稿が密な時期は音符が密集し，間が空いた時期は自然に離散します．音符の形（三角形・円・ひし形）と色は段ごとに固定の意匠で，カンディンスキーの色彩理論（三角形＝黄，円＝青，四角＝赤）から借りています．</p>
         <p>符幹をつなぐ太い線（連桁）は，同一連作（続き物）の記事どうしに，4段すべてで並行して引かれます．音符をクリックすると，その記事のページへ移動します．記事のページでは，その記事を中心とした近傍を，第1主成分だけを使った1段の「パート譜」で表示します．</p>
         <p>破線の輪郭で描かれる音符は，実際の記事ではなく，仕組みを示すためのデモ記事です．</p>
-        <p>冒頭の図形（円・三角形・格子・点・線）はそれぞれ Abstract／Identity／Contents／Contact／Help に対応します．クリックするとその内容がウィンドウとして浮かび上がります．</p>
+        <p>冒頭の図形（円・三角形・格子・点・線・環のある円）はそれぞれ Abstract／Identity／Contents／Contact／Help／Planet に対応します．クリックするとその内容がウィンドウとして浮かび上がります．</p>
+    </template>
+    <template id="tpl-planet">
+        <p class="eyebrow">PLANET</p>
+        <h2>Planet</h2>
+        <p><span class="fake-link">Instagram（準備中）</span></p>
+        <p><span class="fake-link">note（準備中）</span></p>
+        <p><span class="fake-link">GitHub（準備中）</span></p>
     </template>
 
     <div class="modal-overlay" id="modalOverlay" hidden>
