@@ -10,7 +10,10 @@
 - [ ] `research/index.html` ページ自体の前文・見出し文を作成する（現状は見出しのみ）
 - [x] 作品集：`staff meeting in progress`，`Five in a Row` の詳細情報を追加する（2026-08-23，`Anti Composition` も新規追加）
 - [x] 作品集：`Lyric Pieces Op. 2` の解説文を追加，新規に `After Čiurlionis` を追加（2026-08-24）
-- [ ] 楽曲探索：ロースラヴェツ以外の記事を追加するか検討する
+- [x] 楽曲探索：`mosolov`（モソロフ），`popov`（ポポーフ）を追加（2026-08-25）
+- [ ] SNSアカウント欄をindex.htmlの図形ナビに追加する（要：対象プラットフォームとURL/アカウント名の確認）
+- [ ] `contents/mosolov/source.html` の参考音源リンクが実際は「ロースラヴェツ ピアノソナタ第1番」の動画になっている（`roslavets`と同一動画ID）。コピペミスの可能性，要確認
+- [ ] `contents/popov/source.html` 末尾（大組曲 Op.6のセクション）に，モソロフ記事と同一の段落（「モソロフ，初期を代表するピアノ作品．…」）が誤って残っている可能性，要確認
 - [x] Identity / Contact の実際の文面を書く（Contactは実際のメールアドレスに変更済み）
 - [ ] Abstract（index.html内）の本文を書く（2026-08-24，旧「前文」は `shostakovich-symphony-7` 記事として分離し，Abstractはプレースホルダーのまま）
 
@@ -23,6 +26,7 @@
 - [ ] 連作（series）メタデータの管理方法を検討する（現状は各 `source.html` への手動記入のみ）
 - [ ] パート譜の「近傍」抽出ロジック（時間的近さ・連作関係の重み付け）を調整する
 - [ ] 生成楽譜を音で鳴らす（Web Audio API）。記事が増えて聴き応えが出てから着手
+- [x] YouTube動画をページ内に埋め込み表示（`.video-embed`，全12箇所のリンクを埋め込みに変換，2026-08-25）
 
 ## デザイン
 

@@ -193,7 +193,7 @@ window.SCORE_DATA = {
     },
     {
       id: "mosolov",
-      title: "ニコライ・ロースラヴェツ",
+      title: "アレクサンドル・モソロフ",
       url: "/contents/mosolov/",
       date: "2026-08-25",
       kind: "楽曲探索",
@@ -201,6 +201,19 @@ window.SCORE_DATA = {
       pc2: -0.5181,
       pc3: -0.431,
       pc4: 0.8796,
+      series: null,
+      dummy: false
+    },
+    {
+      id: "popov",
+      title: "ガヴリイル・ポポーフ",
+      url: "/contents/popov/",
+      date: "2026-08-25",
+      kind: "楽曲探索",
+      pc1: 0.15,
+      pc2: 0.4607,
+      pc3: -0.0789,
+      pc4: -0.0023,
       series: null,
       dummy: false
     },
