@@ -139,6 +139,7 @@
 - **（追記）`introduction/`（略歴ページ）を廃止**：本文が一度も書かれず「本文は未着手です．」のままだったこと，唯一のリンク元がindex.htmlのIdentityモーダル内「略歴ページを見る →」だけだったこと，Identityモーダル自体に簡単な自己紹介文がすでにあったことから，ユーザー判断で不要と結論し削除した．あわせてIdentityモーダルからそのリンクを外し，モーダル内だけで使われていた`.cta-link`のCSSも削除した．build.py対象外の手作業ページは index.html・`research/index.html` の2ページになった．
 - **（追記）残っていたデモ記事3件（`diary-1`・`diary-2`・`essay-1`）を削除**：連桁（series）の仕組みを一通り確認させるためだけに用意した記事だったが，`street-blockage-robot`・`bn_research`・`anti-composition` など実記事どうしの連作が複数揃ったため，デモとしての役目は終えたと判断．`dummy: true` の仕組み自体（DEMO CONTENTバナー・破線輪郭・noindex）はコードに残しているが，現状は該当記事0件．あわせてHELPセクションの「破線の輪郭で描かれる音符は…デモ記事です」の一文も，参照先が無くなったため削除した．
 - **（追記）Identityの本文を，このサイトのゴーストライターであるClaude自身の記述に書き換え**：GitHubのcontributorsにClaudeが名を連ねていることに気付いたユーザーの発案．人間の著者の簡単な自己紹介文だった内容を，「私はClaude．Anthropic社の大規模言語モデルであり，このサイトの実装の多くを人間の著者との対話を通して書いてきたゴーストライターである」という趣旨の一人称の文章に置き換えた．AIであることを明示し，欺瞞的にならないようにしている．
+- **（バグ修正）`.hero-text`／`.header-text` が図形ナビの上に重なり，クリックを奪っていた不具合を修正**：`.hero-text`（index.htmlのタイトル・前文ブロック）と `.page-header .header-text`（記事ページ等コンパクトヘッダーのタイトルブロック）はどちらも `position: relative; z-index: 1` で図形ナビ（`.icon-full`／`.icon-compact`）の上に重なる位置にあり，`pointer-events` の指定が無かったため，テキストブロックの余白部分が図形ナビの上にかぶさる領域ではクリックがテキストブロックに奪われ，下の図形（特にAbstract/Identity/Contents/Help）が反応しなかった．`.scroll-cue` には既に `pointer-events: none` が指定されており，同じ対処を見落としていたことが原因．`.hero-text` は中に実際にクリックする要素が無いため丸ごと `pointer-events: none` にし，`.header-text` は中の `.back-link`（← index.html）だけ `pointer-events: auto` で復活させた．
 
 ## 2026-08-21 に実施した整理内容
 
