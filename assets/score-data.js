@@ -193,7 +193,7 @@ window.SCORE_DATA = {
     },
     {
       id: "roslavets",
-      title: "ロースラヴェツ：音組織の新体系",
+      title: "ニコライ・ロースラヴェツ",
       url: "/contents/roslavets/",
       date: "2026-08-25",
       isDateExact: true,
@@ -202,6 +202,20 @@ window.SCORE_DATA = {
       pc2: -0.4659,
       pc3: -0.0068,
       pc4: -0.8129,
+      series: null,
+      dummy: false
+    },
+    {
+      id: "roslavets copy",
+      title: "ニコライ・ロースラヴェツ",
+      url: "/contents/roslavets copy/",
+      date: "2026-08-25",
+      isDateExact: true,
+      kind: "楽曲探索",
+      pc1: 0.15,
+      pc2: 0.7705,
+      pc3: 0.3384,
+      pc4: -0.9149,
       series: null,
       dummy: false
     },
