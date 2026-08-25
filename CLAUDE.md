@@ -22,7 +22,6 @@
 │   ├─ score.css                     全ページ共通スタイル（旧 style.css を置き換え）
 │   ├─ score-data.js                 スコア譜のデータ（build.pyが自動生成，直接編集しない）
 │   └─ score.js                      アイコンナビ／スコア譜・パート譜の描画エンジン
-├─ introduction/index.html           略歴（本文未着手）
 ├─ research/index.html               研究記録（本文未着手。見出しのみ）
 └─ contents/                         記事の実体はすべてここに平置き（カテゴリ別フォルダには分けない）
     ├─ festive-sonata-op1/           実記事：Festive Sonata Op. 1（パート譜＋楽譜PDF）
@@ -73,7 +72,7 @@
 ## 技術構成・制約
 
 - サイト自体はビルドツール，静的サイトジェネレータ（Jekyllなど）不使用で，GitHub Pagesにそのまま素のHTML/CSSを公開している．`tools/build.py` はこの方針に反するものではなく，記事追加時に手元で任意に実行するだけの補助スクリプト（実行しなくてもサイトの配信自体には影響しない）．
-- 共通CSS/JS（`assets/score.css`・`assets/score.js`）は外部ファイル化して重複を避けている．記事ページ（`contents/<slug>/index.html`）のヘッダー等の定型部分は `tools/build.py` が自動生成するため重複の心配はないが，index.html・`introduction/`・`research/` の3ページは build.py の対象外で，`<header>` を今も手作業で複製している．ナビゲーションのリンク先を変えるにはこの3ページの修正が必要（後述の既知の課題を参照）．
+- 共通CSS/JS（`assets/score.css`・`assets/score.js`）は外部ファイル化して重複を避けている．記事ページ（`contents/<slug>/index.html`）のヘッダー等の定型部分は `tools/build.py` が自動生成するため重複の心配はないが，index.html・`research/` の2ページは build.py の対象外で，`<header>` を今も手作業で複製している．ナビゲーションのリンク先を変えるにはこの2ページの修正が必要（後述の既知の課題を参照）．
 - 改行コードは `.gitattributes` で LF に統一している．エディタ側の自動変換設定によってはCRLFで保存されることがあるため，コミット前に確認すること．
 
 ## 2026-08-22 に実施したリニューアル
@@ -138,6 +137,7 @@
 - **（追記）Satellitesのアイコンを描き直し**：初回実装では環のある円（惑星のモチーフ，`var(--k-blue-deep)`）にしたが，「単語の意味を直訳せず，カンディンスキー《小さな世界 IV》からの引用に留める」という指摘を受け，散らばる大きさの異なる3つの小円（`var(--k-blue-deep)`）に描き直した．他5つの図形（円・三角形・格子・点・線）と同じ「抽象幾何形態の引用」という語彙に統一している．名称も「Planet」から「Satellites」に変更した．
 - **（追記）Satellitesの実アカウントを設定**：X（`@MSW_DSCH`）／note（`note.com/msw_dsch`）／GitHub（`github.com/msw-dsch`）が判明したため，`tpl-satellites` を「（準備中）」のプレースホルダーから実際の外部リンク（`target="_blank" rel="noopener noreferrer"`，他の外部リンクと同じ表記）に差し替えた．また，Instagramの想定は誤りで実際はXアカウントだった．
 - **（追記）Abstractの本文を執筆**：それまで「本文は未着手です．」だったindex.htmlのAbstractセクションに，本サイトの制作コンセプト（多次元空間上の自己の表層の観察，主成分抽出，西洋音楽の手法による解釈）についての文章が入った．
+- **（追記）`introduction/`（略歴ページ）を廃止**：本文が一度も書かれず「本文は未着手です．」のままだったこと，唯一のリンク元がindex.htmlのIdentityモーダル内「略歴ページを見る →」だけだったこと，Identityモーダル自体に簡単な自己紹介文がすでにあったことから，ユーザー判断で不要と結論し削除した．あわせてIdentityモーダルからそのリンクを外し，モーダル内だけで使われていた`.cta-link`のCSSも削除した．build.py対象外の手作業ページは index.html・`research/index.html` の2ページになった．
 
 ## 2026-08-21 に実施した整理内容
 
@@ -151,10 +151,10 @@
 
 ## 既知の課題・次のリニューアル作業で検討すべきこと
 
-- **ヘッダー／モーダルの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`introduction/index.html`・`research/index.html` の3ページは対象外で，`<header>` の内容と `.modal-overlay` の枠組み（中身は空で `index.html` からfetchする）を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
+- **ヘッダー／モーダルの重複（一部残存）**：記事ページ（`contents/`）は `tools/build.py` により重複の問題が解消された．一方 index.html・`research/index.html` の2ページは対象外で，`<header>` の内容と `.modal-overlay` の枠組み（中身は空で `index.html` からfetchする）を今も手作業で複製している．これらもテンプレート化するか，静的サイトジェネレータの導入を検討．
 - **`pc1`〜`pc4`（記事ベクトルの主成分）が仮値**：`contents/<slug>/source.html` の各記事に人手で -1〜1 の値を割り当てている（`pc2`〜`pc4`は省略時に自動生成される仮値）だけで，本文からベクトルを生成する仕組みはまだ無い．
 - **投稿日の精度**：`date` は確定した1つの日付のみで，推定かどうかの区別は持たない．年しか分からない記事は年内の適当な日（`YYYY-07-01`）で仮確定しているため，正確な日付が判明次第 `source.html` を直接書き換えて `python tools/build.py` を実行する．
-- **未着手コンテンツ**：`introduction/index.html`（略歴），`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
+- **未着手コンテンツ**：`research/index.html`（研究記録）は見出しのみで本文がない．研究記録の実記事は `street-blockage-robot-1〜3` として `contents/` に追加済みで，スコア譜上にも表示されるが，`research/index.html` 自体の本文はまだ書かれていない．
 - **連作（series）メタデータ**：現状は各記事の `source.html` に手動で連作IDを設定しているのみ．記事数が増えた場合の管理方法は未検討．
 - **OGPタグ**：`meta description` は追加済みだが，`og:title`・`og:image` などSNSシェア向けのタグは未設定．
 

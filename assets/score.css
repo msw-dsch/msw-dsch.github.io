@@ -170,11 +170,6 @@ body.modal-lock { overflow: hidden; }
 }
 .modal-body p { margin: 0 0 14px; color: var(--ink-soft); max-width: 60ch; }
 .modal-body .fake-link { color: var(--k-red); border-bottom: 1px solid currentColor; }
-.modal-body .cta-link {
-  display: inline-block; margin-top: 6px; font-family: 'PT Mono', monospace; font-size: 13px;
-  color: var(--k-red); border: 1px solid var(--k-red); padding: 8px 16px;
-}
-.modal-body .cta-link:hover { background: var(--k-red); color: var(--panel); }
 
 /* ---- 作品カード（旧sticker相当） ---- */
 

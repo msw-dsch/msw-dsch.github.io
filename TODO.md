@@ -4,7 +4,7 @@
 
 ## コンテンツ
 
-- [ ] 略歴（`introduction/`）ページの本文を作成する
+- [x] 略歴（`introduction/`）ページを廃止（2026-08-25，本文が未着手のまま不要と判断．Identityモーダルの簡単な自己紹介で代替）
 - [x] 研究記録の実記事を追加する（2026-08-24，`street-blockage-robot-1〜3`：狭隘道路の道路閉塞評価モデル〜卒業制作〜五月祭展示の一連の卒業研究／`bn_discretization`・`bn_sampling`：ベイジアンネットワーク研究．対応するデモ記事 research-note-* は削除済み）
 - [x] `anti-composition` のHEIC写真をJPEGに変換して本文に埋め込み，スコアPDFも画像化して埋め込み（2026-08-24）
 - [ ] `research/index.html` ページ自体の前文・見出し文を作成する（現状は見出しのみ）
@@ -39,7 +39,7 @@
 ## 技術
 
 - [x] 記事ページの重複を解消する仕組みを導入する（`tools/build.py`）
-- [ ] index.html・introduction/・research/ のヘッダー重複を解消する（build.py の対象外として残っている）
+- [ ] index.html・research/ のヘッダー重複を解消する（build.py の対象外として残っている）
 - [x] `meta description` を追加する
 - [x] カテゴリ別一覧ページ（composition/・music/）を廃止（2026-08-23）
 - [ ] OGPタグ（`og:title`，`og:image`など）を追加する（SNSシェア時の見栄え向上）
