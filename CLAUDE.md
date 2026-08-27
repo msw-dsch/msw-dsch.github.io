@@ -14,7 +14,7 @@
 
 ```
 /
-├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）．Abstract/Identity/Contact/Help/Satellitesは常設せず，アイコンクリックでモーダルウィンドウとして表示（内容は<template>で保持）
+├─ index.html                        トップページ．全面のアイコンナビ＋スコア譜（総譜）．Abstract/Identity/Contact/Spatial Composition/Dynamic Composition/Satellitesは常設せず，アイコンクリックでモーダルウィンドウとして表示（内容は<template>で保持）
 ├─ icon.JPG                          サイトアイコン画像（ファビコンとして使用）
 ├─ tools/
 │   └─ build.py                      記事ページ生成スクリプト（後述）
@@ -81,7 +81,7 @@
 - 横位置はどちらも `date`．
 - 音部記号は文字（S/A/Tなど）ではなく，五線の左に描く実際のグリフ（Google Fonts「Noto Music」，ト音記号＝U+1D11E／ヘ音記号＝U+1D122）．スコア譜では段ごとに1つ，パート譜ではその記事の声部の記号を1つだけ表示する．
 - パート譜の末尾には，連作の重みと投稿日・pc1の近さから合成した確率で次の記事へ遷移する「次の記事へ」ボタンがある（`relationWeight()`）．
-- 仕組みの説明はHELPセクション（index.html）にのみ書く．他のページ・セクションでは仕組みの説明を書かない方針．
+- 仕組みの説明はSpatial Composition／Dynamic Compositionセクション（index.html，旧HELP．2026-08-27に分割）にのみ書く．他のページ・セクションでは仕組みの説明を書かない方針．視覚的要素（図形の意匠・音部記号など）はSpatial Composition，音楽的マッピング（pc1〜pc4・連桁・次の音への遷移確率など）はDynamic Compositionに書く．
 - `pc1`〜`pc4` の値は仮の値．`pc1` は各記事で人手で指定するが，`pc2`〜`pc4` は省略するとslugから決定論的に生成した仮値で自動的に埋まる（`tools/build.py` の `hash_pc()`）．実データが判明次第 `source.html` を直接書き換える．
 - `date` は必ず確定した1つの日付を書く．正確な日付が不明な場合も「日付が推定かどうか」を区別する仕組みは持たない（2026-08-25廃止）．本文中に制作年の記載がある記事はその年内の適当な日（例：`YYYY-07-01`）を選んで確定し，制作年の手がかりが本文に全く無い記事は投稿作業を行った日をそのまま使う．
 
@@ -170,6 +170,8 @@
 - **お遍路旅行記シリーズの実記事第1弾を追加**：`ohenro-r1d1` を `ohenro-r1d0`（第1回第0日）にリネームし，実際の日記本文（品川駅からフェリーで四国へ向かう，四国上陸前の移動日）を書き込んだ．テンプレートのままだった `deck`／`description`／表中の「歩行距離」「札所」／地図キャプションの仮値（〇〇・XX等）を実際の内容に差し替え，ギャラリー画像の空だった `alt` 属性も埋めた．
 - **Google My Maps の地図PDFを画像化して埋め込み**：`map.pdf`（Letterサイズ，住所リストのサイドバー付き）を `pymupdf` でレンダリングし，`Pillow` でサイドバーとタイトルをトリミングして `map.jpg` を作成，`figure.figure-full` で埋め込んだ．元のPDFも `.resources` からダウンロードできるようにした．
 - 「札所」の行は四国上陸前で該当が無いため「－（四国上陸前）」に，slug・alt文言の「第1日」表記も「第0日」に合わせて修正．
+- **HELPアイコンをSpatial Composition／Dynamic Compositionの2つに分割**：それまで1つの図形（線＋点）に視覚的要素と音楽的要素の説明を両方詰め込んでいたのを，「見た目の意匠（図形の語彙・音部記号など）」と「スコアへのマッピング（pc1〜pc4・連桁・次の音への遷移確率など）」に分けてほしいという要望を受けて分割．Spatial Compositionは新規の円環（線幅3のみのアウトライン円），Dynamic Compositionは旧HELPの線＋点をそのまま流用した．index.htmlの全面アイコン・`tools/build.py` の `HEADER_NAV`（コンパクトヘッダー，全記事ページに反映）・`research/index.html` の手作業ヘッダーの3箇所を同時に修正．`tpl-help` テンプレートも `tpl-spatial`／`tpl-dynamic` の2つに分割し，`assets/score.js` の `MODAL_IDS` 配列を更新した．
+- お遍路旅行記（`ohenro-r1d0`）がスコア譜に反映されていることを確認（`assets/score-data.js` に `id: "ohenro-r1d0"` として存在）．
 
 - トップページ（`index.html`）のナビゲーションで，「略歴」リンクが `../introduction/index.html` となっており，サイト外に出る壊れたリンクになっていたバグを修正（`./introduction/index.html` に修正）．
 - `composition/index.html` のナビゲーションで「楽曲探求」となっていた表記ゆれを，他ページと同じ「楽曲探索」に統一．

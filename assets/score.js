@@ -15,7 +15,7 @@
  * パート譜（記事ページ）：声部（S/A/T/B）はpc1の四分位から決まる固定属性で，
  * 1段の譜表にpc1のみを連続的な音高として表示する（4声部化はしない）．
  *
- * Abstract/Identity/Contact/Help/Satellitesは全ページ共通でモーダル表示．常設のページ本文としては
+ * Abstract/Identity/Contact/Spatial Composition/Dynamic Composition/Satellitesは全ページ共通でモーダル表示．常設のページ本文としては
  * 出現せず，対応するアイコンのクリックで現在のページの上にウィンドウとして浮かび上がる
  * （openModal／closeModal）．内容の実体は index.html の <template id="tpl-XXX"> にのみ存在し，
  * index.html以外のページではそれをfetchして読み込む（getModalContent）．
@@ -25,7 +25,7 @@
 (function () {
   "use strict";
 
-  var MODAL_IDS = ["abstract", "identity", "contact", "help", "satellites"];
+  var MODAL_IDS = ["abstract", "identity", "contact", "spatial", "dynamic", "satellites"];
   var modalContentCache = null; // Promise<{id: htmlString}>；index.html以外のページでfetch結果を使い回す
   var modalLastFocus = null;
 

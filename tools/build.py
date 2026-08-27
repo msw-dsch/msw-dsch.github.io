@@ -83,8 +83,12 @@ HEADER_NAV = """    <header class="page-header">
                 <title>CONTACT</title>
                 <circle class="shape" cx="222" cy="52" r="10" fill="var(--k-red)"></circle>
             </g>
-            <g class="hotspot" tabindex="0" data-target="/index.html#help" data-label="HELP">
-                <title>HELP</title>
+            <g class="hotspot" tabindex="0" data-target="/index.html#spatial" data-label="SPATIAL COMPOSITION">
+                <title>SPATIAL COMPOSITION</title>
+                <circle class="shape" cx="26" cy="205" r="20" fill="none" stroke="var(--ink)" stroke-width="2.2"></circle>
+            </g>
+            <g class="hotspot" tabindex="0" data-target="/index.html#dynamic" data-label="DYNAMIC COMPOSITION">
+                <title>DYNAMIC COMPOSITION</title>
                 <line class="shape" x1="8" y1="150" x2="70" y2="112" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"></line>
                 <circle class="shape" cx="70" cy="112" r="3.2" fill="var(--ink)"></circle>
             </g>

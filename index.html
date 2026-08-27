@@ -38,8 +38,12 @@
                 <title>CONTACT</title>
                 <circle class="shape" cx="1500" cy="110" r="30" fill="var(--k-red)"></circle>
             </g>
-            <g class="hotspot" tabindex="0" data-target="#help" data-label="HELP">
-                <title>HELP</title>
+            <g class="hotspot" tabindex="0" data-target="#spatial" data-label="SPATIAL COMPOSITION">
+                <title>SPATIAL COMPOSITION</title>
+                <circle class="shape" cx="900" cy="430" r="95" fill="none" stroke="var(--ink)" stroke-width="3"></circle>
+            </g>
+            <g class="hotspot" tabindex="0" data-target="#dynamic" data-label="DYNAMIC COMPOSITION">
+                <title>DYNAMIC COMPOSITION</title>
                 <line class="shape" x1="980" y1="880" x2="1400" y2="600" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"></line>
                 <circle class="shape" cx="1400" cy="600" r="9" fill="var(--ink)"></circle>
             </g>
@@ -75,7 +79,7 @@
         <p>© 2024 壮大なる愚作 MSW-DSCH</p>
     </footer>
 
-    <!-- Abstract/Identity/Contact/Help の本文．常設ページには表示されず，
+    <!-- Abstract/Identity/Contact/Spatial Composition/Dynamic Composition/Satellites の本文．常設ページには表示されず，
          対応するアイコンのクリックでモーダルに複製されて表示される．
          他ページはこのページを fetch してここから内容を読み取る（assets/score.js）． -->
     <template id="tpl-abstract">
@@ -95,13 +99,19 @@
         <h2>Contact</h2>
         <p><span class="fake-link">msw.dsch@gmail.com</span></p>
     </template>
-    <template id="tpl-help">
-        <p class="eyebrow">HELP</p>
-        <h2>Help</h2>
+    <template id="tpl-spatial">
+        <p class="eyebrow">SPATIAL COMPOSITION</p>
+        <h2>Spatial Composition</h2>
+        <p>音符の形（三角形・円・ひし形）と色は声部ごとに固定の意匠で，カンディンスキーの色彩理論（三角形＝黄，円＝青，四角＝赤）から借りています．</p>
+        <p>冒頭の図形（円・三角形・格子・点・円環・線・散らばる小円）も同じ語彙による引用で，それぞれ Abstract／Identity／Contents／Contact／Spatial Composition／Dynamic Composition／Satellites に対応します．クリックすると内容がウィンドウとして浮かび上がります．</p>
+        <p>スコア譜の音符をクリックすると，その記事のページへ移動します．</p>
+    </template>
+    <template id="tpl-dynamic">
+        <p class="eyebrow">DYNAMIC COMPOSITION</p>
+        <h2>Dynamic Composition</h2>
         <p>このサイトの各記事は，上のスコア譜に「和音」として並びます．五線はソプラノ・アルト・テノール・バスの4段で，それぞれ記事ベクトルの第1〜第4主成分（現状は仮値）をそのまま音高として表示します．1つの記事が同時に4つの音として鳴ります．</p>
-        <p>横位置は投稿日（左が古く，右が新しい）．投稿が密な時期は音符が密集し，間が空いた時期は自然に離散します．音符の形（三角形・円・ひし形）と色は段ごとに固定の意匠で，カンディンスキーの色彩理論（三角形＝黄，円＝青，四角＝赤）から借りています．</p>
-        <p>符幹をつなぐ太い線（連桁）は，同一連作（続き物）の記事どうしに，4段すべてで並行して引かれます．音符をクリックすると，その記事のページへ移動します．記事のページでは，その記事を中心とした近傍を，第1主成分だけを使った1段の「パート譜」で表示します．</p>
-        <p>冒頭の図形（円・三角形・格子・点・線・散らばる小円）はそれぞれ Abstract／Identity／Contents／Contact／Help／Satellites に対応します．クリックするとその内容がウィンドウとして浮かび上がります．</p>
+        <p>横位置は投稿日（左が古く，右が新しい）．投稿が密な時期は音符が密集し，間が空いた時期は自然に離散します．</p>
+        <p>符幹をつなぐ太い線（連桁）は，同一連作（続き物）の記事どうしに，4段すべてで並行して引かれます．記事のページでは，その記事を中心とした近傍を，第1主成分だけを使った1段の「パート譜」で表示します．</p>
     </template>
     <template id="tpl-satellites">
         <p class="eyebrow">SATELLITES</p>

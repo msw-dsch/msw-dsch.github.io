@@ -88,6 +88,19 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
+      id: "shostakovich-symphony-7",
+      title: "なぜ私は「壮大なる愚作」を名乗るのか",
+      url: "/contents/shostakovich-symphony-7/",
+      date: "2024-12-16",
+      kind: "エッセイ",
+      pc1: 0.05,
+      pc2: 0.5099,
+      pc3: -0.3773,
+      pc4: 0.2868,
+      series: null,
+      dummy: false
+    },
+    {
       id: "street-blockage-robot-2",
       title: "狭隘道路に関する試⾏的提案 --デジタルツインと「外構ロボット」によるシステム構築--",
       url: "/contents/street-blockage-robot-2/",
@@ -214,19 +227,6 @@ window.SCORE_DATA = {
       pc2: -0.4659,
       pc3: -0.0068,
       pc4: -0.8129,
-      series: null,
-      dummy: false
-    },
-    {
-      id: "shostakovich-symphony-7",
-      title: "なぜ私は「壮大なる愚作」を名乗るのか",
-      url: "/contents/shostakovich-symphony-7/",
-      date: "2026-08-25",
-      kind: "エッセイ",
-      pc1: 0.05,
-      pc2: 0.5099,
-      pc3: -0.3773,
-      pc4: 0.2868,
       series: null,
       dummy: false
     }
