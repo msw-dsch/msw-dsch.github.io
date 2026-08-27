@@ -101,6 +101,19 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
+      id: "ohenro-r1d0",
+      title: "お遍路旅行記 第1回 第0日 — 品川駅 → 太平洋",
+      url: "/contents/ohenro-r1d0/",
+      date: "2025-02-11",
+      kind: "旅行記",
+      pc1: 0.0,
+      pc2: -0.67,
+      pc3: -0.5436,
+      pc4: 0.6576,
+      series: "ohenro",
+      dummy: false
+    },
+    {
       id: "street-blockage-robot-3",
       title: "ロボットと協働する耐災害スマートシティ",
       url: "/contents/street-blockage-robot-3/",
