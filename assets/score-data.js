@@ -127,6 +127,19 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
+      id: "ohenro-r1d1",
+      title: "お遍路旅行記 第1回 第1日 — 太平洋 → 霊山寺",
+      url: "/contents/ohenro-r1d1/",
+      date: "2025-02-12",
+      kind: "旅行記",
+      pc1: 0.05,
+      pc2: 0.0928,
+      pc3: -0.493,
+      pc4: -0.7208,
+      series: "ohenro",
+      dummy: false
+    },
+    {
       id: "street-blockage-robot-3",
       title: "ロボットと協働する耐災害スマートシティ",
       url: "/contents/street-blockage-robot-3/",
