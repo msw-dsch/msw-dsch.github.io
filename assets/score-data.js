@@ -242,6 +242,32 @@ window.SCORE_DATA = {
       pc4: -0.8129,
       series: null,
       dummy: false
+    },
+    {
+      id: "hindemith",
+      title: "パウル・ヒンデミット",
+      url: "/contents/hindemith/",
+      date: "2026-08-30",
+      kind: "楽曲探索",
+      pc1: 0.15,
+      pc2: -0.9385,
+      pc3: -0.6233,
+      pc4: 0.3108,
+      series: null,
+      dummy: false
+    },
+    {
+      id: "janacek",
+      title: "レオシュ・ヤナーチェク",
+      url: "/contents/janacek/",
+      date: "2026-08-30",
+      kind: "楽曲探索",
+      pc1: 0.15,
+      pc2: -0.5837,
+      pc3: 0.9255,
+      pc4: -0.2865,
+      series: null,
+      dummy: false
     }
   ]
 };
