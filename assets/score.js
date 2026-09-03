@@ -161,11 +161,19 @@
     var VOICE_KEYS = ["S", "A", "T", "B"];
     var PC_KEY = { S: "pc1", A: "pc2", T: "pc3", B: "pc4" };
 
+    // 音符の色はカンディンスキーが自身の絵画に付けた三分類（Impression／Improvisation／
+    // Composition）を表す。声部（VOICES）は形（三角形・円・ひし形）と音部記号のみを決め，
+    // 色はこちらに一本化する。値は assets/score-data.js の各記事の expression フィールド。
+    var EXPRESSION_COLORS = { impression: "#3f6fa0", improvisation: "#e2a530", composition: "#1f3550" };
+    var EXPRESSION_LABELS = { impression: "Impression", improvisation: "Improvisation", composition: "Composition" };
+    var UNCLASSIFIED_COLOR = "#8b8579";
+    function noteColor(n) { return EXPRESSION_COLORS[n.expression] || UNCLASSIFIED_COLOR; }
+
     var NODES = window.SCORE_DATA.nodes.map(function (n) {
       return {
         id: n.id, title: n.title, url: n.url, kind: n.kind,
         pc1: n.pc1, pc2: n.pc2, pc3: n.pc3, pc4: n.pc4,
-        series: n.series, dummy: !!n.dummy,
+        series: n.series, expression: n.expression || null, dummy: !!n.dummy,
         date: new Date(n.date + "T00:00:00")
       };
     });
@@ -467,7 +475,7 @@
     function drawNotehead(n, p, voiceKey, opts) {
       opts = opts || {};
       var v = VOICES[voiceKey];
-      var color = opts.active ? "#bd3a2a" : v.color;
+      var color = opts.active ? "#bd3a2a" : noteColor(n);
       var r = 5.6;
 
       if (opts.focus) {
@@ -566,7 +574,8 @@
         tooltip.style.opacity = "1";
         tooltip.style.left = (rect.left - wrapRect.left + p.x) + "px";
         tooltip.style.top = (rect.top - wrapRect.top + p.y - 20) + "px";
-        tooltip.querySelector(".cat").textContent = hit.voice + " ｜ " + fmtDate(n.date) + (n.dummy ? "（デモ）" : "");
+        var exprLabel = n.expression ? EXPRESSION_LABELS[n.expression] + " ｜ " : "";
+        tooltip.querySelector(".cat").textContent = hit.voice + " ｜ " + exprLabel + fmtDate(n.date) + (n.dummy ? "（デモ）" : "");
         tooltip.querySelector(".title").textContent = n.title + (n.id === focusId ? "（この記事）" : "");
         canvas.style.cursor = n.id === focusId ? "default" : "pointer";
       } else {

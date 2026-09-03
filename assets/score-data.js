@@ -20,6 +20,7 @@ window.SCORE_DATA = {
       pc3: -0.4709,
       pc4: -0.6095,
       series: null,
+      expression: "composition",
       dummy: false
     },
     {
@@ -33,6 +34,7 @@ window.SCORE_DATA = {
       pc3: -0.4401,
       pc4: -0.6005,
       series: null,
+      expression: "composition",
       dummy: false
     },
     {
@@ -46,6 +48,7 @@ window.SCORE_DATA = {
       pc3: 0.3035,
       pc4: 0.6707,
       series: "anti-composition",
+      expression: "composition",
       dummy: false
     },
     {
@@ -59,6 +62,7 @@ window.SCORE_DATA = {
       pc3: 0.1001,
       pc4: -0.5653,
       series: "anti-composition",
+      expression: "composition",
       dummy: false
     },
     {
@@ -72,6 +76,7 @@ window.SCORE_DATA = {
       pc3: -0.2216,
       pc4: -0.8351,
       series: null,
+      expression: "composition",
       dummy: false
     },
     {
@@ -85,6 +90,7 @@ window.SCORE_DATA = {
       pc3: -0.9031,
       pc4: 0.6501,
       series: "street-blockage-robot",
+      expression: "composition",
       dummy: false
     },
     {
@@ -98,6 +104,7 @@ window.SCORE_DATA = {
       pc3: -0.3773,
       pc4: 0.2868,
       series: null,
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -111,6 +118,7 @@ window.SCORE_DATA = {
       pc3: -0.7127,
       pc4: 0.554,
       series: "street-blockage-robot",
+      expression: "composition",
       dummy: false
     },
     {
@@ -124,6 +132,7 @@ window.SCORE_DATA = {
       pc3: -0.5436,
       pc4: 0.6576,
       series: "ohenro",
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -137,6 +146,7 @@ window.SCORE_DATA = {
       pc3: -0.493,
       pc4: -0.7208,
       series: "ohenro",
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -150,6 +160,7 @@ window.SCORE_DATA = {
       pc3: -0.421,
       pc4: 0.4835,
       series: "street-blockage-robot",
+      expression: "composition",
       dummy: false
     },
     {
@@ -163,6 +174,7 @@ window.SCORE_DATA = {
       pc3: 0.7736,
       pc4: 0.2715,
       series: null,
+      expression: "composition",
       dummy: false
     },
     {
@@ -176,6 +188,7 @@ window.SCORE_DATA = {
       pc3: 0.1352,
       pc4: -0.2248,
       series: "bn_research",
+      expression: "composition",
       dummy: false
     },
     {
@@ -189,6 +202,7 @@ window.SCORE_DATA = {
       pc3: -0.3427,
       pc4: -0.8112,
       series: "bn_research",
+      expression: "composition",
       dummy: false
     },
     {
@@ -202,6 +216,7 @@ window.SCORE_DATA = {
       pc3: -0.3212,
       pc4: -0.9833,
       series: null,
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -215,6 +230,7 @@ window.SCORE_DATA = {
       pc3: -0.431,
       pc4: 0.8796,
       series: null,
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -228,6 +244,7 @@ window.SCORE_DATA = {
       pc3: -0.0789,
       pc4: -0.0023,
       series: null,
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -241,6 +258,7 @@ window.SCORE_DATA = {
       pc3: -0.0068,
       pc4: -0.8129,
       series: null,
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -254,6 +272,7 @@ window.SCORE_DATA = {
       pc3: -0.6233,
       pc4: 0.3108,
       series: null,
+      expression: "improvisation",
       dummy: false
     },
     {
@@ -267,6 +286,7 @@ window.SCORE_DATA = {
       pc3: 0.9255,
       pc4: -0.2865,
       series: null,
+      expression: "improvisation",
       dummy: false
     }
   ]

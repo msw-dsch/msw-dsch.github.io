@@ -74,12 +74,13 @@
 
 ## スコア譜（楽譜としてのグラフ）の仕組み
 
-- `assets/score-data.js` の `window.SCORE_DATA.nodes` が実行時の唯一のデータソース（ただし前述のとおりこのファイル自体はbuild.pyの生成物）．各記事は `id`（=フォルダ名のslug）・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`〜`pc4`（記事ベクトルの第1〜4主成分の仮値，各-1〜1）・`series`（連作ID，任意）・`dummy`（デモ記事かどうか）を持つ．`dummy: true`（DEMO CONTENTバナー・破線輪郭の音符・noindex）の仕組み自体は残しているが，2026-08-25にデモ記事3件を削除して以降，該当する記事は現状0件．
+- `assets/score-data.js` の `window.SCORE_DATA.nodes` が実行時の唯一のデータソース（ただし前述のとおりこのファイル自体はbuild.pyの生成物）．各記事は `id`（=フォルダ名のslug）・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`〜`pc4`（記事ベクトルの第1〜4主成分の仮値，各-1〜1）・`series`（連作ID，任意）・`expression`（カンディンスキーが自身の絵画に付けた三分類 impression／improvisation／composition のいずれか，任意）・`dummy`（デモ記事かどうか）を持つ．`dummy: true`（DEMO CONTENTバナー・破線輪郭の音符・noindex）の仕組み自体は残しているが，2026-08-25にデモ記事3件を削除して以降，該当する記事は現状0件．
 - `assets/score.js` は `window.SCORE_FOCUS_ID` が未設定なら「スコア譜」（index.html），設定済みなら「パート譜」（記事ページ）を描画する．記事ページは `<script>` で `window.SCORE_FOCUS_ID` をセットしてから `score.js` を読み込む．**両者は音高の決め方が異なる**：
   - **スコア譜（index.html）**：SATB4段はそれぞれ `pc1`→S，`pc2`→A，`pc3`→T，`pc4`→Bを直接・連続的な音高として表示する．つまり1記事＝4段すべてに同時に現れる「和音」．連桁（符幹をつなぐ太線）は同一 `series` の記事どうしに，4段すべてで並行して引かれる．
-  - **パート譜（記事ページ）**：`pc1` のみを使い，1段の譜表に連続的な音高として表示する（4声部化しない）．どの記事も「主たる声部」（S/A/T/B）を1つだけ持ち，これは全記事の `pc1` の四分位から一度だけグローバルに決まる固定属性（`assignVoices()`）．パート譜の音部記号・符頭の形と色はこの声部のもの．
+  - **パート譜（記事ページ）**：`pc1` のみを使い，1段の譜表に連続的な音高として表示する（4声部化しない）．どの記事も「主たる声部」（S/A/T/B）を1つだけ持ち，これは全記事の `pc1` の四分位から一度だけグローバルに決まる固定属性（`assignVoices()`）．パート譜の音部記号・符頭の形はこの声部のもの．
 - 横位置はどちらも `date`．
 - 音部記号は文字（S/A/Tなど）ではなく，五線の左に描く実際のグリフ（Google Fonts「Noto Music」，ト音記号＝U+1D11E／ヘ音記号＝U+1D122）．スコア譜では段ごとに1つ，パート譜ではその記事の声部の記号を1つだけ表示する．
+- 符頭の色は声部ではなく `expression`（カンディンスキーが自身の絵画に付けた三分類：Impression／Improvisation／Composition）を表す．source.htmlで人手で分類し，未分類の記事はグレー（`assets/score.js` の `UNCLASSIFIED_COLOR`）で表示する．スコア譜では1記事＝1つの和音（SATB4段）が同じ色で塗られる．2026-09-03時点でImpressionに該当する記事は無い．
 - パート譜の末尾には，連作の重みと投稿日・pc1の近さから合成した確率で次の記事へ遷移する「次の記事へ」ボタンがある（`relationWeight()`）．
 - 仕組みの説明はSpatial Composition／Dynamic Compositionセクション（index.html，旧HELP．2026-08-27に分割）にのみ書く．他のページ・セクションでは仕組みの説明を書かない方針．視覚的要素（図形の意匠・音部記号など）はSpatial Composition，音楽的マッピング（pc1〜pc4・連桁・次の音への遷移確率など）はDynamic Compositionに書く．
 - `pc1`〜`pc4` の値は仮の値．`pc1` は各記事で人手で指定するが，`pc2`〜`pc4` は省略するとslugから決定論的に生成した仮値で自動的に埋まる（`tools/build.py` の `hash_pc()`）．実データが判明次第 `source.html` を直接書き換える．
@@ -186,6 +187,13 @@
 - **お遍路旅行記シリーズの実記事第2弾を追加**：`ohenro-r1d1`（第1回第1日，徳島港上陸〜一番札所霊山寺前）．ユーザーが書いた本文をもとに，コピー元だった `ohenro-r1d0` フォルダから引き継いだままのテンプレート仮値（タイトルの日程表記，`date`，`deck`／`description`，「歩行距離」「札所」の表の値，一部写真の `alt` 属性）を実際の内容に合わせて修正．タイトル・table中の「区間」は，`ohenro-r1d0`（品川駅→太平洋）からの詩的な連続性（太平洋→霊山寺）を踏襲する形にした．地図PDFは前日と同じ手順（`pymupdf`＋`Pillow` でサイドバー・タイトルをトリミング）で `map.jpg` を作成．
 - 併せて `ohenro-r1d0` 自身にも，テンプレート由来の作者向け指示コメント（複製・リネーム手順や配慮事項へのポインタ）がそのまま本番のsource.htmlに残っていた見落としを発見し削除．
 - 宿泊施設「お遍路ハウス一番門前通り」の実名掲載について，CLAUDE.mdの配慮事項（好意的な紹介でも先方の意向を確認しないまま公開することには慎重に，としている）に照らしてユーザーに確認．「実名のまま公開」の判断だったため，そのまま掲載している．
+
+## 2026-09-03 に実施した作業
+
+- **スコア譜／パート譜の音符の色を，カンディンスキーが自身の絵画に付けた三分類（Impression／Improvisation／Composition）で塗り分ける仕組みを導入**：それまで音符の色は声部（S/A/T/B）ごとに固定だったが，声部は形（三角形・円・ひし形）と音部記号のみを担うことにし，色をこの三分類に一本化した．`contents/<slug>/source.html` に任意項目 `expression`（値は `impression`／`improvisation`／`composition`）を追加し，`tools/build.py` が `assets/score-data.js` の各記事ノードにそのまま反映する（省略時はグレーの未分類色）．色は `assets/score.js` の `EXPRESSION_COLORS`（impression=`--k-blue`，improvisation=`--k-yellow`，composition=`--k-blue-deep`）で管理し，サイト全体のアクセント色 `--k-red` とは意図的に重複させていない．ツールチップにも分類名を表示するようにした．
+- **既存の完成記事20件（`ohenro-r1d2` を除く全記事）を分類**：作品（自作曲6件）と研究紹介（5件）は「深く検討し，長い時間をかけて理性的に組み上げる」というComposition の定義に沿うため `composition` に，楽曲探索（他作曲家の紹介6件）・お遍路旅行記（2件）・エッセイ「なぜ私は『壮大なる愚作』を名乗るのか」（1件）は「無意識的・自発的な内面の表出」というImprovisation の定義に沿うため `improvisation` に分類した．Impression（外界の直接的な印象の写生）に相当する記事は現状無いと判断し，該当記事は0件のまま．
+- 未完成の下書き `contents/ohenro-r1d2/`（`source.html` はあるが `index.html`・地図画像が未整備）は分類・ビルドの対象から意図的に除外．`python tools/build.py` 実行時は一時的に `source.html` を退避してから実行し，実行後に戻す運用とした．
+- Spatial Composition モーダル（index.html）の説明文を更新し，「音符の形は声部固定，色はImpression/Improvisation/Compositionの分類」と「冒頭図形の色（三角形＝黄，円＝青，四角＝赤というバウハウス由来の色彩理論）」が別の軸であることを明記．
 
 ## 既知の課題・次のリニューアル作業で検討すべきこと
 

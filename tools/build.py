@@ -29,6 +29,9 @@ contents/<slug>/source.html を読み込み，
 
 省略可能な項目（省略時は自動で補う）:
     series      連作ID。同じseriesを持つ記事どうしが連桁でつながる（既定 なし）
+    expression  カンディンスキーが自身の絵画につけた三分類 impression／improvisation／
+                composition（小文字）のいずれか。スコア譜・パート譜の音符の色に反映される。
+                省略時は分類なし（未分類の中間色で表示）
     dummy       true にするとDEMO CONTENTバナー・noindexが自動で付く（既定 false）
     heading     ページ見出し(h1)がtitleと違う場合だけ指定（既定 titleと同じ）
     eyebrow     見出し上の小さなラベル（既定 "{年}"）。「作品」「研究記録」等の
@@ -215,6 +218,12 @@ def build_one(slug_dir):
     pc3 = float(meta["pc3"]) if meta.get("pc3") else hash_pc(slug, "pc3")
     pc4 = float(meta["pc4"]) if meta.get("pc4") else hash_pc(slug, "pc4")
     series = meta.get("series") or None
+    expression = (meta.get("expression") or "").strip().lower() or None
+    if expression and expression not in ("impression", "improvisation", "composition"):
+        raise ValueError(
+            f"{slug}: invalid expression value '{expression}' "
+            "(must be impression / improvisation / composition)"
+        )
     dummy = truthy(meta.get("dummy"), default=False)
 
     heading = meta.get("heading") or title
@@ -251,6 +260,7 @@ def build_one(slug_dir):
         "pc3": pc3,
         "pc4": pc4,
         "series": series,
+        "expression": expression,
         "dummy": dummy,
     }
 
@@ -282,6 +292,7 @@ def write_score_data(nodes):
         lines.append(f'      pc3: {js_value(n["pc3"])},')
         lines.append(f'      pc4: {js_value(n["pc4"])},')
         lines.append(f'      series: {js_value(n["series"])},')
+        lines.append(f'      expression: {js_value(n["expression"])},')
         lines.append(f'      dummy: {js_value(n["dummy"])}')
         lines.append("    }" + comma)
     lines.append("  ]")
