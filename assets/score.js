@@ -153,18 +153,20 @@
     if (!mount || !window.SCORE_DATA) return;
 
     var VOICES = {
-      S: { row: 0, shape: "triangle", color: "#e2a530", clef: "treble", clefScale: 1.15 },
-      A: { row: 1, shape: "circle",   color: "#3f6fa0", clef: "treble", clefScale: 0.85 },
-      T: { row: 2, shape: "circle",   color: "#1f3550", clef: "bass",   clefScale: 0.85 },
-      B: { row: 3, shape: "diamond",  color: "#bd3a2a", clef: "bass",   clefScale: 1.15 }
+      S: { row: 0, color: "#e2a530", clef: "treble", clefScale: 1.15 },
+      A: { row: 1, color: "#3f6fa0", clef: "treble", clefScale: 0.85 },
+      T: { row: 2, color: "#1f3550", clef: "bass",   clefScale: 0.85 },
+      B: { row: 3, color: "#bd3a2a", clef: "bass",   clefScale: 1.15 }
     };
     var VOICE_KEYS = ["S", "A", "T", "B"];
     var PC_KEY = { S: "pc1", A: "pc2", T: "pc3", B: "pc4" };
 
     // 音符の色はカンディンスキーが自身の絵画に付けた三分類（Impression／Improvisation／
-    // Composition）を表す。声部（VOICES）は形（三角形・円・ひし形）と音部記号のみを決め，
-    // 色はこちらに一本化する。値は assets/score-data.js の各記事の expression フィールド。
-    var EXPRESSION_COLORS = { impression: "#3f6fa0", improvisation: "#e2a530", composition: "#1f3550" };
+    // Composition）を表す。声部（VOICES）は音部記号の色・段のみを決め，音符自体の色は
+    // こちらに一本化する。値は assets/score-data.js の各記事の expression フィールド。
+    // 《小さな世界 IV》の黄土色の地・群青の円・黒い格子から，くっきり見分けられるよう
+    // サイト全体の淡いUI配色（--k-*）よりも彩度を上げて抽出した3色。
+    var EXPRESSION_COLORS = { impression: "#2f63c7", improvisation: "#e8a317", composition: "#171512" };
     var EXPRESSION_LABELS = { impression: "Impression", improvisation: "Improvisation", composition: "Composition" };
     var UNCLASSIFIED_COLOR = "#8b8579";
     function noteColor(n) { return EXPRESSION_COLORS[n.expression] || UNCLASSIFIED_COLOR; }
@@ -472,14 +474,17 @@
       }
     }
 
+    // 音符の形は声部で出し分けず，通常の記譜のように斜めにひずんだ楕円（符頭）に統一する。
+    // NOTE_TILT はペン先で書いたような右肩上がりの傾き。
+    var NOTE_RX = 7.4, NOTE_RY = 5.0, NOTE_TILT = -0.34;
+
     function drawNotehead(n, p, voiceKey, opts) {
       opts = opts || {};
-      var v = VOICES[voiceKey];
       var color = opts.active ? "#bd3a2a" : noteColor(n);
-      var r = 5.6;
+      var stemX = NOTE_RX - 1.8;
 
       if (opts.focus) {
-        ctx.beginPath(); ctx.arc(p.x, p.y, r + 8, 0, Math.PI * 2);
+        ctx.beginPath(); ctx.arc(p.x, p.y, NOTE_RX + 8, 0, Math.PI * 2);
         ctx.strokeStyle = "rgba(28,26,23,0.5)"; ctx.lineWidth = 1.4; ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
       }
       drawLedgerLines(p);
@@ -488,23 +493,18 @@
       var stemTopY = stemUp ? p.y - 24 : p.y + 24;
       ctx.strokeStyle = color; ctx.lineWidth = 1.3;
       ctx.beginPath();
-      ctx.moveTo(p.x + (stemUp ? r - 1 : -(r - 1)), p.y);
-      ctx.lineTo(p.x + (stemUp ? r - 1 : -(r - 1)), stemTopY);
+      ctx.moveTo(p.x + (stemUp ? stemX : -stemX), p.y);
+      ctx.lineTo(p.x + (stemUp ? stemX : -stemX), stemTopY);
       ctx.stroke();
 
-      ctx.fillStyle = color; ctx.globalAlpha = n.dummy ? 0.5 : 1; ctx.beginPath();
-      if (v.shape === "triangle") {
-        ctx.moveTo(p.x, p.y - r); ctx.lineTo(p.x + r * 0.95, p.y + r * 0.7); ctx.lineTo(p.x - r * 0.95, p.y + r * 0.7); ctx.closePath();
-      } else if (v.shape === "diamond") {
-        ctx.moveTo(p.x, p.y - r * 1.05); ctx.lineTo(p.x + r * 1.05, p.y); ctx.lineTo(p.x, p.y + r * 1.05); ctx.lineTo(p.x - r * 1.05, p.y); ctx.closePath();
-      } else {
-        ctx.arc(p.x, p.y, r * 0.92, 0, Math.PI * 2);
-      }
+      ctx.fillStyle = color; ctx.globalAlpha = n.dummy ? 0.5 : 1;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, NOTE_RX, NOTE_RY, NOTE_TILT, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
       if (n.dummy) { ctx.lineWidth = 1; ctx.strokeStyle = color; ctx.setLineDash([2, 2]); ctx.stroke(); ctx.setLineDash([]); }
       if (opts.active || opts.focus) { ctx.lineWidth = 1.6; ctx.strokeStyle = "#1c1a17"; ctx.stroke(); }
-      p._stemTop = { x: p.x + (stemUp ? r - 1 : -(r - 1)), y: stemTopY };
+      p._stemTop = { x: p.x + (stemUp ? stemX : -stemX), y: stemTopY };
     }
 
     function drawBeamSegment(p1, p2, w) {

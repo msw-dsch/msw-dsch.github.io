@@ -77,10 +77,10 @@
 - `assets/score-data.js` の `window.SCORE_DATA.nodes` が実行時の唯一のデータソース（ただし前述のとおりこのファイル自体はbuild.pyの生成物）．各記事は `id`（=フォルダ名のslug）・`title`・`url`（`/contents/<slug>/` 形式のサイトルート相対パス）・`date`・`kind`・`pc1`〜`pc4`（記事ベクトルの第1〜4主成分の仮値，各-1〜1）・`series`（連作ID，任意）・`expression`（カンディンスキーが自身の絵画に付けた三分類 impression／improvisation／composition のいずれか，任意）・`dummy`（デモ記事かどうか）を持つ．`dummy: true`（DEMO CONTENTバナー・破線輪郭の音符・noindex）の仕組み自体は残しているが，2026-08-25にデモ記事3件を削除して以降，該当する記事は現状0件．
 - `assets/score.js` は `window.SCORE_FOCUS_ID` が未設定なら「スコア譜」（index.html），設定済みなら「パート譜」（記事ページ）を描画する．記事ページは `<script>` で `window.SCORE_FOCUS_ID` をセットしてから `score.js` を読み込む．**両者は音高の決め方が異なる**：
   - **スコア譜（index.html）**：SATB4段はそれぞれ `pc1`→S，`pc2`→A，`pc3`→T，`pc4`→Bを直接・連続的な音高として表示する．つまり1記事＝4段すべてに同時に現れる「和音」．連桁（符幹をつなぐ太線）は同一 `series` の記事どうしに，4段すべてで並行して引かれる．
-  - **パート譜（記事ページ）**：`pc1` のみを使い，1段の譜表に連続的な音高として表示する（4声部化しない）．どの記事も「主たる声部」（S/A/T/B）を1つだけ持ち，これは全記事の `pc1` の四分位から一度だけグローバルに決まる固定属性（`assignVoices()`）．パート譜の音部記号・符頭の形はこの声部のもの．
+  - **パート譜（記事ページ）**：`pc1` のみを使い，1段の譜表に連続的な音高として表示する（4声部化しない）．どの記事も「主たる声部」（S/A/T/B）を1つだけ持ち，これは全記事の `pc1` の四分位から一度だけグローバルに決まる固定属性（`assignVoices()`）．パート譜の音部記号はこの声部のもの（符頭の形は全声部共通，後述）．
 - 横位置はどちらも `date`．
 - 音部記号は文字（S/A/Tなど）ではなく，五線の左に描く実際のグリフ（Google Fonts「Noto Music」，ト音記号＝U+1D11E／ヘ音記号＝U+1D122）．スコア譜では段ごとに1つ，パート譜ではその記事の声部の記号を1つだけ表示する．
-- 符頭の色は声部ではなく `expression`（カンディンスキーが自身の絵画に付けた三分類：Impression／Improvisation／Composition）を表す．source.htmlで人手で分類し，未分類の記事はグレー（`assets/score.js` の `UNCLASSIFIED_COLOR`）で表示する．スコア譜では1記事＝1つの和音（SATB4段）が同じ色で塗られる．2026-09-03時点でImpressionに該当する記事は無い．
+- 符頭の形は声部で出し分けず，通常の記譜のように斜めにひずんだ楕円（`assets/score.js` の `NOTE_RX`/`NOTE_RY`/`NOTE_TILT`）に統一している．符頭の色は声部ではなく `expression`（カンディンスキーが自身の絵画に付けた三分類：Impression／Improvisation／Composition）を表す．source.htmlで人手で分類し，未分類の記事はグレー（`assets/score.js` の `UNCLASSIFIED_COLOR`）で表示する．スコア譜では1記事＝1つの和音（SATB4段）が同じ色で塗られる．色は《小さな世界 IV》（黄土色の地・群青の円・黒い格子）から，サイト全体の淡いUI配色（`--k-*`）よりも彩度を上げて抽出した3色（`EXPRESSION_COLORS`）．
 - パート譜の末尾には，連作の重みと投稿日・pc1の近さから合成した確率で次の記事へ遷移する「次の記事へ」ボタンがある（`relationWeight()`）．
 - 仕組みの説明はSpatial Composition／Dynamic Compositionセクション（index.html，旧HELP．2026-08-27に分割）にのみ書く．他のページ・セクションでは仕組みの説明を書かない方針．視覚的要素（図形の意匠・音部記号など）はSpatial Composition，音楽的マッピング（pc1〜pc4・連桁・次の音への遷移確率など）はDynamic Compositionに書く．
 - `pc1`〜`pc4` の値は仮の値．`pc1` は各記事で人手で指定するが，`pc2`〜`pc4` は省略するとslugから決定論的に生成した仮値で自動的に埋まる（`tools/build.py` の `hash_pc()`）．実データが判明次第 `source.html` を直接書き換える．
@@ -194,6 +194,14 @@
 - **既存の完成記事20件（`ohenro-r1d2` を除く全記事）を分類**：作品（自作曲6件）と研究紹介（5件）は「深く検討し，長い時間をかけて理性的に組み上げる」というComposition の定義に沿うため `composition` に，楽曲探索（他作曲家の紹介6件）・お遍路旅行記（2件）・エッセイ「なぜ私は『壮大なる愚作』を名乗るのか」（1件）は「無意識的・自発的な内面の表出」というImprovisation の定義に沿うため `improvisation` に分類した．Impression（外界の直接的な印象の写生）に相当する記事は現状無いと判断し，該当記事は0件のまま．
 - 未完成の下書き `contents/ohenro-r1d2/`（`source.html` はあるが `index.html`・地図画像が未整備）は分類・ビルドの対象から意図的に除外．`python tools/build.py` 実行時は一時的に `source.html` を退避してから実行し，実行後に戻す運用とした．
 - Spatial Composition モーダル（index.html）の説明文を更新し，「音符の形は声部固定，色はImpression/Improvisation/Compositionの分類」と「冒頭図形の色（三角形＝黄，円＝青，四角＝赤というバウハウス由来の色彩理論）」が別の軸であることを明記．
+
+## 2026-09-04 に実施した作業
+
+前日（2026-09-03）の分類・配色・実装を，ユーザーからのフィードバックを受けて以下の3点修正．
+
+- **`shostakovich-symphony-7` の再分類**：`composition` ではなく `impression`（外界の直接的な印象の写生）寄りの内容だったとの指摘を受け修正．あわせて `date` を `2024-12-16` から `2021-04-01` に変更（ユーザー指定）．これにより，現状 Impression に該当する記事が初めて1件になった．
+- **音符の色をより彩度の高い配色に変更**：カンディンスキー《小さな世界 IV》（黄土色の地・群青の円・黒い格子）から，前日導入したサイト全体の淡いUI配色（`--k-blue`/`--k-yellow`/`--k-blue-deep`）よりもコントラストの強い3色を新たに抽出し直した．`assets/score.js` の `EXPRESSION_COLORS` を `impression: #2f63c7`（群青）／`improvisation: #e8a317`（黄土）／`composition: #171512`（黒）に変更．3色の明度・彩度を離すことで，一見して分類が判別しやすくなるようにした．
+- **音符の形を全声部で統一**：声部ごとの三角形・円・ひし形の出し分けは情報量として不要との判断で廃止し，すべて「斜めにひずんだ楕円」（実際の記譜の符頭を模した形）に統一した．`assets/score.js` に `NOTE_RX`/`NOTE_RY`/`NOTE_TILT` の3定数を追加し，`ctx.ellipse()` で描画．`VOICES` オブジェクトの `shape` フィールドは不要になったため削除（`color`・`clef`・`clefScale` は音部記号の色・段としてそのまま残す）．
 
 ## 既知の課題・次のリニューアル作業で検討すべきこと
 

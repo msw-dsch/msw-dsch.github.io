@@ -24,6 +24,20 @@ window.SCORE_DATA = {
       dummy: false
     },
     {
+      id: "shostakovich-symphony-7",
+      title: "なぜ私は「壮大なる愚作」を名乗るのか",
+      url: "/contents/shostakovich-symphony-7/",
+      date: "2021-04-01",
+      kind: "エッセイ",
+      pc1: 0.05,
+      pc2: 0.5099,
+      pc3: -0.3773,
+      pc4: 0.2868,
+      series: null,
+      expression: "impression",
+      dummy: false
+    },
+    {
       id: "lyric-pieces-op2",
       title: "Lyric Pieces Op. 2",
       url: "/contents/lyric-pieces-op2/",
@@ -91,20 +105,6 @@ window.SCORE_DATA = {
       pc4: 0.6501,
       series: "street-blockage-robot",
       expression: "composition",
-      dummy: false
-    },
-    {
-      id: "shostakovich-symphony-7",
-      title: "なぜ私は「壮大なる愚作」を名乗るのか",
-      url: "/contents/shostakovich-symphony-7/",
-      date: "2024-12-16",
-      kind: "エッセイ",
-      pc1: 0.05,
-      pc2: 0.5099,
-      pc3: -0.3773,
-      pc4: 0.2868,
-      series: null,
-      expression: "improvisation",
       dummy: false
     },
     {
