@@ -187,6 +187,14 @@
 
     // パート譜の音高：projections[焦点の記事][相手の記事]（build.pyが算出）
     var PROJECTIONS = window.SCORE_DATA.projections || {};
+    // 「次の音へ」の重み：similarity[今の記事][候補の記事]（コサイン類似度，0〜1）
+    var SIMILARITY = window.SCORE_DATA.similarity || {};
+    function similarityOf(a, b) {
+      var row = SIMILARITY[a];
+      if (row && typeof row[b] === "number") return row[b];
+      var x = byId[a], y = byId[b];                // similarityが無い古いデータへの保険
+      return x && y ? 1 / (1 + Math.abs(x.pc1 - y.pc1) * 3) : 0.5;
+    }
     function partPitch(focus, id) {
       var row = PROJECTIONS[focus];
       if (row && typeof row[id] === "number") return row[id];
@@ -350,14 +358,15 @@
       updateChrome();
     }
 
-    // 関連の強さ（連作＞時期の近さ・pc1の近さ）から，次の記事への遷移確率を決める
+    // 関連の強さ（連作＞時期の近さ・本文の似かた）から，次の記事への遷移確率を決める．
+    // 本文の似かたは，記事ベクトルどうしのコサイン類似度（SCORE_DATA.similarity，
+    // 最も似た相手が1になるよう記事ごとに正規化済み）をそのまま使う
     function relationWeight(focus, other) {
       var edge = adj[focus.id].filter(function (o) { return o.to === other.id; })[0];
       if (edge) return edge.w;
       var dayDiff = Math.abs(focus.date.getTime() - other.date.getTime()) / 86400000;
       var timeScore = 1 / (1 + dayDiff / 180);
-      var pc1Score = 1 / (1 + Math.abs(focus.pc1 - other.pc1) * 3);
-      return 0.12 * (timeScore * 0.5 + pc1Score * 0.5);
+      return 0.12 * (timeScore * 0.5 + similarityOf(focus.id, other.id) * 0.5);
     }
     function pickNextByRelation(focus) {
       var candidates = NODES.filter(function (n) { return n.id !== focus.id; });

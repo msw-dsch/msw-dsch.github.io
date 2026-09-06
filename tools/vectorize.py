@@ -9,6 +9,8 @@
     ソプラノ＝pc1／アルト＝pc4／テノール＝pc3／バス＝pc2 の各段の音高になる
   - 記事ごとの射影（`projections`）……score-data.js の projections。記事ページの
     パート譜で，その記事自身のベクトルの向きを軸として周辺記事を並べた音高になる
+  - 記事どうしのコサイン類似度（`similarities`）……score-data.js の similarity。
+    記事ページの「次の音へ」で，次の記事を選ぶ確率の重みになる
 
 tools/build.py から呼ばれるほか，単体で実行すると解析レポートを表示する。
 
@@ -334,6 +336,26 @@ def projections(slugs, rows):
     return result
 
 
+def similarities(slugs, rows):
+    """記事どうしのコサイン類似度（中心化しない素の内積）。
+
+    ベクトルはL2正規化済みなので ⟨x_i, x_j⟩ がそのままコサイン類似度になる。
+    TF-IDFは非負なので値も常に 0 以上で，0＝共通する語が無い，1＝同一。
+    パート譜の `projections` とは別物で，こちらは記事ページの「次の音へ」の
+    遷移確率（assets/score.js の relationWeight）に使う。
+
+    尺度は最大値で割り，最も似ている相手が1になるようにする。自分自身は
+    使い道が無いので行から外す。戻り値は {焦点slug: {相手slug: 0〜1}}。
+    """
+    n = len(rows)
+    result = {}
+    for i, focus in enumerate(slugs):
+        raw = {slugs[j]: _dot(rows[j], rows[i]) for j in range(n) if j != i}
+        peak = max(raw.values(), default=0.0) or 1.0
+        result[focus] = {s: round(max(v / peak, 0.0), 4) for s, v in raw.items()}
+    return result
+
+
 # --- まとめ ---------------------------------------------------------------
 
 def analyse(documents, n_components=N_COMPONENTS, scaling=DEFAULT_SCALING):
@@ -352,6 +374,7 @@ def analyse(documents, n_components=N_COMPONENTS, scaling=DEFAULT_SCALING):
     return {
         "scores": scores,
         "projections": projections(slugs, rows),
+        "similarity": similarities(slugs, rows),
         "slugs": slugs,
         "scaling": scaling,
         "vocab_size": len(vocab),

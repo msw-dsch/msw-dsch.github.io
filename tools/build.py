@@ -172,6 +172,8 @@ SCORE_DATA_HEADER = """/*
  * ソプラノ＝pc1／アルト＝pc4／テノール＝pc3／バス＝pc2 の音高になる。
  * projections は，各記事のベクトルの向きを軸として全記事を射影した値で，
  * その記事のページのパート譜の音高になる（焦点自身は必ず譜表の一番上）。
+ * similarity は記事どうしのコサイン類似度（0〜1，最も似た相手が1）で，
+ * 記事ページの「次の音へ」が次の記事を選ぶ確率の重みになる。
 {analysis} */
 
 window.SCORE_DATA = {{
@@ -318,6 +320,15 @@ def write_score_data(nodes, analysis):
     for i, focus in enumerate(order):
         row = analysis["projections"].get(focus, {})
         pairs = ", ".join(f"{js_value(other)}: {js_value(row.get(other, 0.0))}" for other in order)
+        comma = "," if i < len(order) - 1 else ""
+        lines.append(f"    {js_value(focus)}: {{ {pairs} }}{comma}")
+    lines.append("  },")
+    lines.append("")
+    lines.append("  // 「次の音へ」の重み：similarity[今の記事][候補の記事]（コサイン類似度）")
+    lines.append("  similarity: {")
+    for i, focus in enumerate(order):
+        row = analysis["similarity"].get(focus, {})
+        pairs = ", ".join(f"{js_value(o)}: {js_value(row[o])}" for o in order if o in row)
         comma = "," if i < len(order) - 1 else ""
         lines.append(f"    {js_value(focus)}: {{ {pairs} }}{comma}")
     lines.append("  }")
