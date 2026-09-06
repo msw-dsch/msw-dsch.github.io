@@ -168,7 +168,10 @@ SCORE_DATA_HEADER = """/*
  * ビルドスクリプトを実行する。
  *
  * pc1〜pc4 は tools/vectorize.py が全記事の本文から求めた第1〜第4主成分
- * （TF-IDF＋主成分分析。軸ごとに -1〜1 へ正規化してある）。
+ * （TF-IDF＋主成分分析。軸ごとに -1〜1 へ正規化してある）。スコア譜の
+ * ソプラノ＝pc1／アルト＝pc4／テノール＝pc3／バス＝pc2 の音高になる。
+ * projections は，各記事のベクトルの向きを軸として全記事を射影した値で，
+ * その記事のページのパート譜の音高になる（焦点自身は必ず譜表の一番上）。
 {analysis} */
 
 window.SCORE_DATA = {{
@@ -307,7 +310,17 @@ def write_score_data(nodes, analysis):
         lines.append(f'      expression: {js_value(n["expression"])},')
         lines.append(f'      dummy: {js_value(n["dummy"])}')
         lines.append("    }" + comma)
-    lines.append("  ]")
+    lines.append("  ],")
+    lines.append("")
+    lines.append("  // パート譜の音高：projections[焦点の記事][相手の記事]")
+    lines.append("  projections: {")
+    order = [n["id"] for n in nodes]
+    for i, focus in enumerate(order):
+        row = analysis["projections"].get(focus, {})
+        pairs = ", ".join(f"{js_value(other)}: {js_value(row.get(other, 0.0))}" for other in order)
+        comma = "," if i < len(order) - 1 else ""
+        lines.append(f"    {js_value(focus)}: {{ {pairs} }}{comma}")
+    lines.append("  }")
     lines.append("};")
     lines.append("")
     (ROOT / "assets" / "score-data.js").write_text("\n".join(lines), encoding="utf-8", newline="\n")

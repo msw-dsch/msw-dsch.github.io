@@ -3,9 +3,13 @@
 """
 壮大なる愚作 — 記事の自動ベクトル化と主成分分析（PCA）。
 
-各記事の本文（contents/<slug>/source.html）から特徴ベクトルを作り，全記事に対して
-主成分分析を行って第1〜第4主成分スコアを求める。得られたスコアが score-data.js の
-pc1〜pc4 になり，スコア譜のソプラノ／アルト／テノール／バス各段の音高になる。
+各記事の本文（contents/<slug>/source.html）から特徴ベクトルを作り，2種類の音高を出す。
+
+  - 主成分スコア（`pca`）……score-data.js の pc1〜pc4。index.htmlのスコア譜で
+    ソプラノ＝pc1／アルト＝pc4／テノール＝pc3／バス＝pc2 の各段の音高になる
+  - 記事ごとの射影（`projections`）……score-data.js の projections。記事ページの
+    パート譜で，その記事自身のベクトルの向きを軸として周辺記事を並べた音高になる
+
 tools/build.py から呼ばれるほか，単体で実行すると解析レポートを表示する。
 
     python tools/vectorize.py            # 解析レポート（寄与率・各軸の特徴語・記事の座標）
@@ -289,6 +293,47 @@ def pca(rows, n_components=N_COMPONENTS, scaling=DEFAULT_SCALING):
     return components
 
 
+# --- パート譜用の射影 -------------------------------------------------------
+
+def projections(slugs, rows):
+    """記事ごとに「その記事のベクトルの向き」を軸として，全記事を射影する。
+
+    パート譜（記事ページ）の音高になる。焦点となる記事 i の中心化ベクトルを
+    単位ベクトル û_i = x̃_i / ‖x̃_i‖ とし，各記事 j の音高を ⟨x̃_j, û_i⟩ とする。
+    0（＝五線の中心）は「重心から見て記事iの向きと直交する」ことを意味し，
+    正なら記事iと同じ向き，負なら逆向きに寄っている。
+
+    尺度は，焦点自身を除いた全記事の最大絶対値で割る（0の位置は動かさない）。
+    焦点自身は必ず飛び抜けて大きいので -1〜1 に収まらないが，描画側が音高を
+    クランプするため，常に譜表の一番上に「基準の音」として置かれる。
+
+    戻り値は {焦点slug: {相手slug: 音高}}。
+    """
+    n = len(rows)
+    mean = {}
+    for row in rows:
+        for term, w in row.items():
+            mean[term] = mean.get(term, 0.0) + w
+    for term in mean:
+        mean[term] /= n
+
+    centered = []
+    for row in rows:
+        c = {t: row.get(t, 0.0) - mean.get(t, 0.0) for t in sorted(set(row) | set(mean))}
+        centered.append({t: w for t, w in c.items() if w})
+    norms = [math.sqrt(_dot(c, c)) for c in centered]
+
+    result = {}
+    for i, focus in enumerate(slugs):
+        if norms[i] == 0:
+            result[focus] = {s: 0.0 for s in slugs}
+            continue
+        raw = [_dot(centered[j], centered[i]) / norms[i] for j in range(n)]
+        peak = max((abs(raw[j]) for j in range(n) if j != i), default=0.0) or 1.0
+        result[focus] = {slugs[j]: round(raw[j] / peak, 4) for j in range(n)}
+    return result
+
+
 # --- まとめ ---------------------------------------------------------------
 
 def analyse(documents, n_components=N_COMPONENTS, scaling=DEFAULT_SCALING):
@@ -306,6 +351,7 @@ def analyse(documents, n_components=N_COMPONENTS, scaling=DEFAULT_SCALING):
     }
     return {
         "scores": scores,
+        "projections": projections(slugs, rows),
         "slugs": slugs,
         "scaling": scaling,
         "vocab_size": len(vocab),
@@ -330,6 +376,14 @@ def format_report(result, n_terms=12):
         lines.append("    －側: " + minus)
         lines.append("    " + "  ".join(
             "{}:{:+.2f}".format(slug, vals[k]) for slug, vals in ordered))
+
+    lines.append("")
+    lines.append("パート譜の音高（各記事のベクトルの向きを軸にした射影。焦点自身は譜表上端に固定）")
+    for focus in result["slugs"]:
+        row = result["projections"][focus]
+        near = sorted(((s, v) for s, v in row.items() if s != focus), key=lambda kv: -kv[1])
+        lines.append("  {}: {}".format(focus, "  ".join(
+            "{}:{:+.2f}".format(s, v) for s, v in near[:4])))
     return "\n".join(lines)
 
 

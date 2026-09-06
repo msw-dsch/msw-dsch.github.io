@@ -6,14 +6,17 @@
  *   - window.SCORE_FOCUS_ID が設定済 → パート譜（記事ページ）
  * を #score-canvas-mount 内の <canvas> に描画する．
  *
- * スコア譜（index.html）：4段（S/A/T/B）はそれぞれ記事ベクトルの第1〜4主成分
- * （pc1〜pc4）の音高を表す．つまり1つの記事＝1つの和音として，同じ横位置に
- * 4つの音符が同時に鳴る．
+ * スコア譜（index.html）：4段（S/A/T/B）はそれぞれ記事ベクトルの主成分の音高を
+ * 表す（ソプラノ＝pc1，アルト＝pc4，テノール＝pc3，バス＝pc2）．つまり1つの
+ * 記事＝1つの和音として，同じ横位置に4つの音符が同時に鳴る．
  * 連桁（符幹をつなぐ太線）は，同一連作（series）の記事どうしに，4段すべてで
  * 並行して引かれる．
  *
- * パート譜（記事ページ）：声部（S/A/T/B）はpc1の四分位から決まる固定属性で，
- * 1段の譜表にpc1のみを連続的な音高として表示する（4声部化はしない）．
+ * パート譜（記事ページ）：主成分は使わず，その記事自身のベクトルの向きを軸として
+ * 周辺記事を射影した音高（SCORE_DATA.projections）を1段の譜表に並べる．焦点の
+ * 記事は必ず譜表の一番上（基準の音）に立ち，五線の中心は「その向きと直交する
+ * ＝共通するものが平均的な記事」を意味する．声部（音部記号）はpc1の四分位から
+ * 決まる固定属性で，音高そのものには関与しない．
  *
  * Abstract/Identity/Contact/Spatial Composition/Dynamic Composition/Satellitesは全ページ共通でモーダル表示．常設のページ本文としては
  * 出現せず，対応するアイコンのクリックで現在のページの上にウィンドウとして浮かび上がる
@@ -159,7 +162,7 @@
       B: { row: 3, color: "#bd3a2a", clef: "bass",   clefScale: 1.15 }
     };
     var VOICE_KEYS = ["S", "A", "T", "B"];
-    var PC_KEY = { S: "pc1", A: "pc2", T: "pc3", B: "pc4" };
+    var PC_KEY = { S: "pc1", A: "pc4", T: "pc3", B: "pc2" };
 
     // 音符の色はカンディンスキーが自身の絵画に付けた三分類（Impression／Improvisation／
     // Composition）を表す。声部（VOICES）は音部記号の色・段のみを決め，音符自体の色は
@@ -182,8 +185,16 @@
     var byId = {};
     NODES.forEach(function (n) { byId[n.id] = n; });
 
-    // パート譜用の「主たる声部」は，pc1の四分位から一度だけグローバルに決める
-    // （スコア譜の4段はpc1〜pc4を直接使うので，この声部分類は使わない）
+    // パート譜の音高：projections[焦点の記事][相手の記事]（build.pyが算出）
+    var PROJECTIONS = window.SCORE_DATA.projections || {};
+    function partPitch(focus, id) {
+      var row = PROJECTIONS[focus];
+      if (row && typeof row[id] === "number") return row[id];
+      return byId[id] ? byId[id].pc1 : 0;   // projectionsが無い古いデータへの保険
+    }
+
+    // パート譜の「主たる声部」は音部記号だけを決める属性で，音高には関与しない．
+    // pc1の四分位から一度だけグローバルに決める
     (function assignVoices() {
       var sorted = NODES.slice().sort(function (a, b) { return a.pc1 - b.pc1; });
       var n = sorted.length;
@@ -309,7 +320,7 @@
           });
           pos[id] = voicesPos;
         } else {
-          var step = clamp(Math.round(n2.pc1 * 8), -16, 16);
+          var step = clamp(Math.round(partPitch(focusId, id) * 8), -16, 16);
           var baseY = PAD_TOP + PART_BASE_OFFSET;
           maxAbsStep = Math.max(maxAbsStep, Math.abs(step));
           pos[id] = { x: x, y: baseY - step * (LINE_GAP / 2), step: step, baseY: baseY };
