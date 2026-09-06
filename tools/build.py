@@ -25,7 +25,6 @@ contents/<slug>/source.html を読み込み，
     kind    種別（例：作品，楽曲探索，研究メモ）。サイト表示には出さない内部用の分類で，
             source.html を読む人（自分）が識別しやすくするためだけに使う
     date    投稿日（YYYY-MM-DD）
-    pc1     記事ベクトルの第1主成分の仮値（-1〜1）。index.htmlのスコア譜ではソプラノ段の音高になる
 
 省略可能な項目（省略時は自動で補う）:
     series      連作ID。同じseriesを持つ記事どうしが連桁でつながる（既定 なし）
@@ -38,24 +37,26 @@ contents/<slug>/source.html を読み込み，
                 カテゴリ名は出さない方針（記事は分類ラベルを名乗らない）
     deck        見出し下の一言（既定：dummyならデモ表記，通常は空）
     description meta descriptionタグの内容（既定：自動生成）
-    pc2/pc3/pc4 第2〜4主成分の仮値（-1〜1）。index.htmlのスコア譜ではそれぞれ
-                アルト／テノール／バス段の音高になり，4段で1つの記事＝1つの和音を表す
-                （パート譜では使わず，pc1のみ参照する）。省略時はslugから決定論的に
-                生成した仮値で自動的に埋める（毎回同じ値になるが，本文からの算出ではない）
+    pc1〜pc4    記事ベクトルの第1〜第4主成分（-1〜1）。index.htmlのスコア譜では
+                それぞれソプラノ／アルト／テノール／バス段の音高になり，4段で
+                1つの記事＝1つの和音を表す（パート譜では pc1 のみ使う）。
+                **通常は書かない**：省略すると tools/vectorize.py が全記事の本文から
+                自動的に算出する（TF-IDF＋主成分分析）。ここに値を書いた軸だけは，
+                その手入力の値で自動算出の結果を上書きする
 
 例:
     <!--meta
     title: Lyric Pieces Op. 2
     kind: 作品
     date: 2021-08-15
-    pc1: 0.50
     -->
     <p>本文...</p>
 """
-import hashlib
 import json
 import re
 from pathlib import Path
+
+import vectorize
 
 ROOT = Path(__file__).resolve().parent.parent
 CONTENTS = ROOT / "contents"
@@ -165,9 +166,12 @@ SCORE_DATA_HEADER = """/*
  * 直接編集しないこと（次回 `python tools/build.py` を実行すると上書きされる）。
  * 記事を追加・編集するには，該当する contents/<slug>/source.html を書き換えてから
  * ビルドスクリプトを実行する。
- */
+ *
+ * pc1〜pc4 は tools/vectorize.py が全記事の本文から求めた第1〜第4主成分
+ * （TF-IDF＋主成分分析。軸ごとに -1〜1 へ正規化してある）。
+{analysis} */
 
-window.SCORE_DATA = {
+window.SCORE_DATA = {{
   nodes: [
 """
 
@@ -194,18 +198,26 @@ def truthy(value, default=False):
     return value.strip().lower() in ("true", "yes", "1")
 
 
-def hash_pc(slug, axis):
-    """slugとaxis名から-1〜1の決定論的な仮値を作る（pc2〜pc4の既定値用）。"""
-    digest = hashlib.sha256(f"{slug}:{axis}".encode("utf-8")).hexdigest()
-    n = int(digest[:8], 16)
-    return round((n / 0xFFFFFFFF) * 2 - 1, 4)
+def collect_sources():
+    """contents/ 以下の全記事を [(slug_dir, meta, body), ...] として集める。"""
+    slug_dirs = sorted(p for p in CONTENTS.iterdir() if p.is_dir() and (p / "source.html").exists())
+    if not slug_dirs:
+        raise SystemExit("contents/ 以下に source.html が見つかりません")
+    return [(d,) + parse_source(d / "source.html") for d in slug_dirs]
 
 
-def build_one(slug_dir):
+def resolve_pcs(meta, computed):
+    """自動算出した主成分スコアを既定値とし，source.htmlに手入力があればそちらを使う。"""
+    return [
+        float(meta[key]) if meta.get(key) else computed[i]
+        for i, key in enumerate(("pc1", "pc2", "pc3", "pc4"))
+    ]
+
+
+def build_one(slug_dir, meta, body, pcs):
     slug = slug_dir.name
-    meta, body = parse_source(slug_dir / "source.html")
 
-    for required in ("title", "kind", "date", "pc1"):
+    for required in ("title", "kind", "date"):
         if required not in meta or meta[required] == "":
             raise ValueError(f"{slug}: source.html is missing required field '{required}'")
 
@@ -213,10 +225,7 @@ def build_one(slug_dir):
     kind = meta["kind"]
     date = meta["date"]
     year = date[:4]
-    pc1 = float(meta["pc1"])
-    pc2 = float(meta["pc2"]) if meta.get("pc2") else hash_pc(slug, "pc2")
-    pc3 = float(meta["pc3"]) if meta.get("pc3") else hash_pc(slug, "pc3")
-    pc4 = float(meta["pc4"]) if meta.get("pc4") else hash_pc(slug, "pc4")
+    pc1, pc2, pc3, pc4 = pcs
     series = meta.get("series") or None
     expression = (meta.get("expression") or "").strip().lower() or None
     if expression and expression not in ("impression", "improvisation", "composition"):
@@ -277,8 +286,11 @@ def js_value(v):
     return json.dumps(v, ensure_ascii=False)
 
 
-def write_score_data(nodes):
-    lines = [SCORE_DATA_HEADER.rstrip("\n")]
+def write_score_data(nodes, analysis):
+    summary = " * 語彙 {} 語／正規化 {}／寄与率 {}\n".format(
+        analysis["vocab_size"], analysis["scaling"],
+        "，".join(f"pc{i + 1} {r * 100:.1f}%" for i, r in enumerate(analysis["explained"])))
+    lines = [SCORE_DATA_HEADER.format(analysis=summary).rstrip("\n")]
     for i, n in enumerate(nodes):
         comma = "," if i < len(nodes) - 1 else ""
         lines.append("    {")
@@ -302,25 +314,44 @@ def write_score_data(nodes):
 
 
 def main():
-    slug_dirs = sorted(p for p in CONTENTS.iterdir() if p.is_dir() and (p / "source.html").exists())
-    if not slug_dirs:
-        raise SystemExit("contents/ 以下に source.html が見つかりません")
+    import argparse
+
+    parser = argparse.ArgumentParser(description="記事ページとスコアデータを生成する")
+    parser.add_argument("--report", action="store_true",
+                        help="主成分分析の詳しいレポート（各軸の特徴語と記事の座標）も表示する")
+    parser.add_argument("--scale", choices=sorted(vectorize.SCALINGS),
+                        default=vectorize.DEFAULT_SCALING,
+                        help="主成分スコアを-1〜1に収める方法（既定 %(default)s）")
+    args = parser.parse_args()
+
+    sources = collect_sources()
+
+    # 全記事の本文をまとめてベクトル化し，主成分スコア（pc1〜pc4）を求める
+    documents = [(d.name, vectorize.document_text(meta, body)) for d, meta, body in sources]
+    analysis = vectorize.analyse(documents, scaling=args.scale)
 
     nodes = []
-    for slug_dir in slug_dirs:
+    for slug_dir, meta, body in sources:
         try:
-            nodes.append(build_one(slug_dir))
+            pcs = resolve_pcs(meta, analysis["scores"][slug_dir.name])
+            nodes.append(build_one(slug_dir, meta, body, pcs))
         except Exception as e:
             raise SystemExit(f"エラー（{slug_dir.name}）: {e}")
 
     nodes.sort(key=lambda n: n["date"])
-    write_score_data(nodes)
+    write_score_data(nodes, analysis)
 
     real_count = sum(1 for n in nodes if not n["dummy"])
     dummy_count = len(nodes) - real_count
     print(f"生成しました：記事{len(nodes)}件（実記事{real_count}件／デモ{dummy_count}件）")
     print("  -> contents/*/index.html")
     print("  -> assets/score-data.js")
+    print("主成分分析：語彙{}語，寄与率 {}".format(
+        analysis["vocab_size"],
+        "／".join(f"pc{i + 1} {r * 100:.1f}%" for i, r in enumerate(analysis["explained"]))))
+    if args.report:
+        print()
+        print(vectorize.format_report(analysis))
 
 
 if __name__ == "__main__":
